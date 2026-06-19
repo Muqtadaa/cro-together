@@ -341,7 +341,7 @@ function ProofAboutSection() {
           </blockquote>
           <div className="flex flex-col items-center gap-1">
             <span className="text-white" style={tx.bodySm}>Muqtadaa Miandara</span>
-            <span className="text-text-muted" style={tx.bodySm}>Founder &amp; Chief Strategist</span>
+            <span className="text-text-muted-invert" style={tx.bodySm}>Founder &amp; Chief Strategist</span>
           </div>
           <Link
             to="/about"

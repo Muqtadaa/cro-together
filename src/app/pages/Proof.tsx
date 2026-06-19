@@ -171,7 +171,7 @@ function DualCase() {
         {/* Right: OOS Rescue (dark card) */}
         <div className="bg-navy p-10 flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <span className="text-text-muted uppercase" style={tx.eyebrow}>
+            <span className="text-text-muted-invert uppercase" style={tx.eyebrow}>
               Dead-End Page Rescue
             </span>
             <h2 className="text-white" style={tx.h2Md}>
@@ -181,20 +181,20 @@ function DualCase() {
 
           <div className="flex flex-col gap-1">
             <span className="text-gold" style={tx.statXl}>+35.7%</span>
-            <span className="text-text-muted uppercase" style={tx.micro}>
+            <span className="text-text-muted-invert uppercase" style={tx.micro}>
               Online Checkout Conversion Lift
             </span>
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-text-muted uppercase" style={tx.eyebrow}>The Insight</h3>
+            <h3 className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Insight</h3>
             <p className="text-[rgba(255,255,255,0.7)]" style={tx.bodyMd}>
               Out-of-stock product pages were a conversion black hole — users hit a dead end and left. Qualitative research revealed that users weren't opposed to alternatives; they simply weren't being offered any.
             </p>
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-text-muted uppercase" style={tx.eyebrow}>The Outcome</h3>
+            <h3 className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Outcome</h3>
             <p className="text-[rgba(255,255,255,0.7)]" style={tx.bodyMd}>
               Redesigned the OOS PDP to surface substitute products and flexible options. Product Web Orders lifted +8.68–11.19%, Online Checkout conversions +35.74%, and Reservations +27.53%. A dead end became a revenue touchpoint.
             </p>

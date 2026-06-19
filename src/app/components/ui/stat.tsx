@@ -78,7 +78,7 @@ export function Stat({
         </span>
       )}
       <p
-        className={isDark ? "text-text-muted" : "text-text-body"}
+        className={isDark ? "text-text-muted-invert" : "text-text-body"}
         style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", lineHeight: "1.5" }}
       >
         {label}

@@ -5,30 +5,30 @@ import { SectionHeader } from "../components/ui/section-header";
 import { ExtensionGallery, type Screenshot } from "../components/extension-gallery";
 
 // Power Tools screenshots (polished marketing tiles) — full + thumbnail
-import ptBulk from "../../assets/extensions/power-tools/01-bulk.png";
-import ptSummary from "../../assets/extensions/power-tools/02-summary.png";
-import ptFigma from "../../assets/extensions/power-tools/03-figma.png";
-import ptConvert from "../../assets/extensions/power-tools/04-convert.png";
-import ptHistory from "../../assets/extensions/power-tools/05-history.png";
-import ptBulkT from "../../assets/extensions/power-tools/thumbs/01-bulk.png";
-import ptSummaryT from "../../assets/extensions/power-tools/thumbs/02-summary.png";
-import ptFigmaT from "../../assets/extensions/power-tools/thumbs/03-figma.png";
-import ptConvertT from "../../assets/extensions/power-tools/thumbs/04-convert.png";
-import ptHistoryT from "../../assets/extensions/power-tools/thumbs/05-history.png";
+import ptBulk from "../../assets/extensions/power-tools/01-bulk.webp";
+import ptSummary from "../../assets/extensions/power-tools/02-summary.webp";
+import ptFigma from "../../assets/extensions/power-tools/03-figma.webp";
+import ptConvert from "../../assets/extensions/power-tools/04-convert.webp";
+import ptHistory from "../../assets/extensions/power-tools/05-history.webp";
+import ptBulkT from "../../assets/extensions/power-tools/thumbs/01-bulk.webp";
+import ptSummaryT from "../../assets/extensions/power-tools/thumbs/02-summary.webp";
+import ptFigmaT from "../../assets/extensions/power-tools/thumbs/03-figma.webp";
+import ptConvertT from "../../assets/extensions/power-tools/thumbs/04-convert.webp";
+import ptHistoryT from "../../assets/extensions/power-tools/thumbs/05-history.webp";
 
 // QA Helper screenshots (product in context) — full + thumbnail
-import qaForce from "../../assets/extensions/qa-helper/01-force-variations.png";
-import qaList from "../../assets/extensions/qa-helper/02-experiment-list.png";
-import qaDevices from "../../assets/extensions/qa-helper/03-settings-devices.png";
-import qaDrawer from "../../assets/extensions/qa-helper/04-drawer-mode.png";
-import qaEventLog from "../../assets/extensions/qa-helper/05-event-log.png";
-import qaCollapsed from "../../assets/extensions/qa-helper/06-collapsed-tab.png";
-import qaForceT from "../../assets/extensions/qa-helper/thumbs/01-force-variations.png";
-import qaListT from "../../assets/extensions/qa-helper/thumbs/02-experiment-list.png";
-import qaDevicesT from "../../assets/extensions/qa-helper/thumbs/03-settings-devices.png";
-import qaDrawerT from "../../assets/extensions/qa-helper/thumbs/04-drawer-mode.png";
-import qaEventLogT from "../../assets/extensions/qa-helper/thumbs/05-event-log.png";
-import qaCollapsedT from "../../assets/extensions/qa-helper/thumbs/06-collapsed-tab.png";
+import qaForce from "../../assets/extensions/qa-helper/01-force-variations.webp";
+import qaList from "../../assets/extensions/qa-helper/02-experiment-list.webp";
+import qaDevices from "../../assets/extensions/qa-helper/03-settings-devices.webp";
+import qaDrawer from "../../assets/extensions/qa-helper/04-drawer-mode.webp";
+import qaEventLog from "../../assets/extensions/qa-helper/05-event-log.webp";
+import qaCollapsed from "../../assets/extensions/qa-helper/06-collapsed-tab.webp";
+import qaForceT from "../../assets/extensions/qa-helper/thumbs/01-force-variations.webp";
+import qaListT from "../../assets/extensions/qa-helper/thumbs/02-experiment-list.webp";
+import qaDevicesT from "../../assets/extensions/qa-helper/thumbs/03-settings-devices.webp";
+import qaDrawerT from "../../assets/extensions/qa-helper/thumbs/04-drawer-mode.webp";
+import qaEventLogT from "../../assets/extensions/qa-helper/thumbs/05-event-log.webp";
+import qaCollapsedT from "../../assets/extensions/qa-helper/thumbs/06-collapsed-tab.webp";
 
 interface ExtensionData {
   number: string;
@@ -164,7 +164,7 @@ function ExtensionCard({ ext }: { ext: ExtensionData }) {
                 Add to Chrome →
               </a>
               {ext.note && (
-                <p className="text-text-body" style={{ ...tx.bodyXs, maxWidth: "32ch" }}>
+                <p className="text-text-muted" style={{ ...tx.bodyXs, maxWidth: "32ch" }}>
                   {ext.note}
                 </p>
               )}
