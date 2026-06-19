@@ -4,20 +4,31 @@ import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
 import { ExtensionGallery, type Screenshot } from "../components/extension-gallery";
 
-// Power Tools screenshots (polished marketing tiles)
+// Power Tools screenshots (polished marketing tiles) — full + thumbnail
 import ptBulk from "../../assets/extensions/power-tools/01-bulk.png";
 import ptSummary from "../../assets/extensions/power-tools/02-summary.png";
 import ptFigma from "../../assets/extensions/power-tools/03-figma.png";
 import ptConvert from "../../assets/extensions/power-tools/04-convert.png";
 import ptHistory from "../../assets/extensions/power-tools/05-history.png";
+import ptBulkT from "../../assets/extensions/power-tools/thumbs/01-bulk.png";
+import ptSummaryT from "../../assets/extensions/power-tools/thumbs/02-summary.png";
+import ptFigmaT from "../../assets/extensions/power-tools/thumbs/03-figma.png";
+import ptConvertT from "../../assets/extensions/power-tools/thumbs/04-convert.png";
+import ptHistoryT from "../../assets/extensions/power-tools/thumbs/05-history.png";
 
-// QA Helper screenshots (product in context)
+// QA Helper screenshots (product in context) — full + thumbnail
 import qaForce from "../../assets/extensions/qa-helper/01-force-variations.png";
 import qaList from "../../assets/extensions/qa-helper/02-experiment-list.png";
 import qaDevices from "../../assets/extensions/qa-helper/03-settings-devices.png";
 import qaDrawer from "../../assets/extensions/qa-helper/04-drawer-mode.png";
 import qaEventLog from "../../assets/extensions/qa-helper/05-event-log.png";
 import qaCollapsed from "../../assets/extensions/qa-helper/06-collapsed-tab.png";
+import qaForceT from "../../assets/extensions/qa-helper/thumbs/01-force-variations.png";
+import qaListT from "../../assets/extensions/qa-helper/thumbs/02-experiment-list.png";
+import qaDevicesT from "../../assets/extensions/qa-helper/thumbs/03-settings-devices.png";
+import qaDrawerT from "../../assets/extensions/qa-helper/thumbs/04-drawer-mode.png";
+import qaEventLogT from "../../assets/extensions/qa-helper/thumbs/05-event-log.png";
+import qaCollapsedT from "../../assets/extensions/qa-helper/thumbs/06-collapsed-tab.png";
 
 interface ExtensionData {
   number: string;
@@ -47,12 +58,12 @@ const EXTENSIONS: ExtensionData[] = [
       { title: "Live Event Log", detail: "Watch Optimizely lifecycle events, decisions, and tracked events with filters and expandable payloads." },
     ],
     screenshots: [
-      { src: qaForce, alt: "Force Variations panel switching a visitor's variation on a live storefront", caption: "Force variations inline" },
-      { src: qaList, alt: "Live experiment list dropdown showing active experiments and audiences", caption: "Live experiment list" },
-      { src: qaDevices, alt: "Settings panel with device and viewport emulation options", caption: "Device & viewport emulation" },
-      { src: qaDrawer, alt: "QA Helper docked as a side drawer alongside the page", caption: "Dock as a side drawer" },
-      { src: qaEventLog, alt: "Live event log streaming Optimizely lifecycle and tracked events", caption: "Live event log" },
-      { src: qaCollapsed, alt: "Collapsed floating tab tucked at the edge of the page", caption: "Collapsed floating tab" },
+      { src: qaForce, thumb: qaForceT, alt: "Force Variations panel switching a visitor's variation on a live storefront", caption: "Force variations inline" },
+      { src: qaList, thumb: qaListT, alt: "Live experiment list dropdown showing active experiments and audiences", caption: "Live experiment list" },
+      { src: qaDevices, thumb: qaDevicesT, alt: "Settings panel with device and viewport emulation options", caption: "Device & viewport emulation" },
+      { src: qaDrawer, thumb: qaDrawerT, alt: "QA Helper docked as a side drawer alongside the page", caption: "Dock as a side drawer" },
+      { src: qaEventLog, thumb: qaEventLogT, alt: "Live event log streaming Optimizely lifecycle and tracked events", caption: "Live event log" },
+      { src: qaCollapsed, thumb: qaCollapsedT, alt: "Collapsed floating tab tucked at the edge of the page", caption: "Collapsed floating tab" },
     ],
     storeUrl: "https://chromewebstore.google.com/detail/optimizely-web-qa-helper/diccoohklmgnapebfindkoocilnlbocg",
     note: "Runs locally in your browser. Collects no data and sends no telemetry.",
@@ -74,11 +85,11 @@ const EXTENSIONS: ExtensionData[] = [
       { title: "Figma Integration", detail: "Browse and attach design frames to variations without copying URLs around." },
     ],
     screenshots: [
-      { src: ptBulk, alt: "Bulk actions selecting multiple tests to pause, archive, or conclude", caption: "Bulk-manage tests from the list" },
-      { src: ptSummary, alt: "Inline test summary expanded within the experiment list", caption: "Inline test summaries" },
-      { src: ptFigma, alt: "Figma frame picker attaching a design to a variation", caption: "Attach Figma frames to variations" },
-      { src: ptConvert, alt: "Converting an A/B test into a Personalization campaign with a diff", caption: "Convert A/B ⇄ Personalization" },
-      { src: ptHistory, alt: "Version history timeline with one-click rollback", caption: "Version history & rollback" },
+      { src: ptBulk, thumb: ptBulkT, alt: "Bulk actions selecting multiple tests to pause, archive, or conclude", caption: "Bulk-manage tests from the list" },
+      { src: ptSummary, thumb: ptSummaryT, alt: "Inline test summary expanded within the experiment list", caption: "Inline test summaries" },
+      { src: ptFigma, thumb: ptFigmaT, alt: "Figma frame picker attaching a design to a variation", caption: "Attach Figma frames to variations" },
+      { src: ptConvert, thumb: ptConvertT, alt: "Converting an A/B test into a Personalization campaign with a diff", caption: "Convert A/B ⇄ Personalization" },
+      { src: ptHistory, thumb: ptHistoryT, alt: "Version history timeline with one-click rollback", caption: "Version history & rollback" },
     ],
     storeUrl: "https://chromewebstore.google.com/detail/optimizely-power-tools/khnghhfcmojoblenbinhegjdijcnamod",
     note: "An independent project, not affiliated with or endorsed by Optimizely.",
@@ -153,7 +164,7 @@ function ExtensionCard({ ext }: { ext: ExtensionData }) {
                 Add to Chrome →
               </a>
               {ext.note && (
-                <p className="text-text-muted" style={{ ...tx.bodyXs, maxWidth: "32ch" }}>
+                <p className="text-text-body" style={{ ...tx.bodyXs, maxWidth: "32ch" }}>
                   {ext.note}
                 </p>
               )}

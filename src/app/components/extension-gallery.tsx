@@ -5,7 +5,10 @@ import { sans } from "../../lib/typography";
 import { cn } from "./ui/utils";
 
 export interface Screenshot {
+  /** Full-resolution image — used for the lead and the lightbox. */
   src: string;
+  /** Optional downscaled image for the thumbnail strip (falls back to src). */
+  thumb?: string;
   alt: string;
   caption: string;
 }
@@ -25,12 +28,12 @@ function BrowserFrame({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border border-[rgba(0,0,0,0.1)] bg-white",
+        "overflow-hidden rounded-lg border border-border bg-white",
         "shadow-[0_24px_60px_-28px_rgba(6,14,26,0.35)]",
         className,
       )}
     >
-      <div className="flex items-center gap-1.5 border-b border-[rgba(0,0,0,0.07)] bg-[#f1ede8] px-3.5 py-2.5">
+      <div className="flex items-center gap-1.5 border-b border-[rgba(0,0,0,0.07)] bg-tan px-3.5 py-2.5">
         <span className="h-[9px] w-[9px] rounded-full bg-[#d8d2c8]" />
         <span className="h-[9px] w-[9px] rounded-full bg-[#e2dcd2]" />
         <span className="h-[9px] w-[9px] rounded-full bg-[#ece6dc]" />
@@ -72,15 +75,16 @@ export function ExtensionGallery({ shots }: { shots: Screenshot[] }) {
         type="button"
         onClick={() => setOpenIndex(0)}
         aria-label={`View screenshot: ${lead.caption}`}
-        className="group block w-full cursor-zoom-in text-left transition-transform duration-300 hover:-translate-y-0.5"
+        className="group block w-full cursor-zoom-in rounded-lg text-left transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       >
-        <BrowserFrame className="transition-shadow duration-300 group-hover:shadow-[0_30px_70px_-26px_rgba(6,14,26,0.42)]">
+        <BrowserFrame className="transition-shadow duration-300 group-hover:shadow-[0_30px_70px_-26px_rgba(6,14,26,0.42)] motion-reduce:transition-none">
           <img
             src={lead.src}
             alt={lead.alt}
             width={1280}
             height={800}
             loading="lazy"
+            decoding="async"
             className="block aspect-[1280/800] w-full object-cover"
           />
         </BrowserFrame>
@@ -95,16 +99,17 @@ export function ExtensionGallery({ shots }: { shots: Screenshot[] }) {
               type="button"
               onClick={() => setOpenIndex(i + 1)}
               aria-label={`View screenshot: ${shot.caption}`}
-              className="group relative shrink-0 cursor-zoom-in overflow-hidden rounded-md border border-[rgba(0,0,0,0.1)] transition-all duration-200 hover:border-[rgba(6,14,26,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+              className="group relative shrink-0 cursor-zoom-in overflow-hidden rounded-md border border-border transition-all duration-200 hover:border-[rgba(6,14,26,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy motion-reduce:transition-none"
               style={{ width: "132px" }}
             >
               <img
-                src={shot.src}
+                src={shot.thumb ?? shot.src}
                 alt={shot.alt}
-                width={1280}
-                height={800}
+                width={400}
+                height={250}
                 loading="lazy"
-                className="block aspect-[1280/800] w-full object-cover opacity-90 transition-opacity duration-200 group-hover:opacity-100"
+                decoding="async"
+                className="block aspect-[1280/800] w-full object-cover opacity-90 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none"
               />
             </button>
           ))}
@@ -117,10 +122,10 @@ export function ExtensionGallery({ shots }: { shots: Screenshot[] }) {
         onOpenChange={(o) => !o && setOpenIndex(null)}
       >
         <DialogPrimitive.Portal>
-          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-[rgba(6,14,26,0.82)] backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-navy/85 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:animate-none" />
           <DialogPrimitive.Content
             aria-describedby={undefined}
-            className="fixed top-1/2 left-1/2 z-50 w-full max-w-[min(1100px,92vw)] -translate-x-1/2 -translate-y-1/2 px-4 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+            className="fixed top-1/2 left-1/2 z-50 w-full max-w-[min(1100px,92vw)] -translate-x-1/2 -translate-y-1/2 px-4 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 motion-reduce:animate-none"
           >
             {isOpen && (
               <DialogPrimitive.Title className="sr-only">
@@ -130,7 +135,7 @@ export function ExtensionGallery({ shots }: { shots: Screenshot[] }) {
 
             {/* Close */}
             <DialogPrimitive.Close
-              className="absolute -top-1 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:-top-12 sm:right-4"
+              className="absolute -top-1 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:-top-12 sm:right-4"
               aria-label="Close"
             >
               <X className="h-5 w-5" />
@@ -143,6 +148,7 @@ export function ExtensionGallery({ shots }: { shots: Screenshot[] }) {
                   alt={shots[openIndex].alt}
                   width={1280}
                   height={800}
+                  decoding="async"
                   className="block aspect-[1280/800] w-full object-contain bg-white"
                 />
               )}
@@ -150,11 +156,11 @@ export function ExtensionGallery({ shots }: { shots: Screenshot[] }) {
 
             {/* Caption + counter */}
             {isOpen && (
-              <div className="mt-4 flex items-center justify-center gap-3 text-white/90">
+              <div className="mt-4 flex items-center justify-center gap-3 text-white">
                 <span style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px" }}>
                   {shots[openIndex].caption}
                 </span>
-                <span className="text-white/50" style={{ fontFamily: sans, fontWeight: 200, fontSize: "13px" }}>
+                <span className="text-white/70" style={{ fontFamily: sans, fontWeight: 200, fontSize: "13px" }}>
                   {openIndex + 1} / {shots.length}
                 </span>
               </div>
