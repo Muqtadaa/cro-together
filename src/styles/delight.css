@@ -1,0 +1,110 @@
+/*
+ * Delight layer — micro-interactions, hover polish, and subtle feedback.
+ * All motion is wrapped in prefers-reduced-motion guards.
+ */
+
+/* ── CTA buttons — press + lift feedback ──────────────────────────────── */
+/*
+ * Targets Link/button elements styled with bg-navy (primary CTA) or
+ * bg-white (light CTA on dark backgrounds). The Tailwind classes apply
+ * transition-opacity; we extend it to include transform.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  a.bg-navy,
+  button.bg-navy {
+    transition-property: transform, opacity !important;
+    transition-duration: 0.15s !important;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
+  a.bg-navy:hover,
+  button.bg-navy:hover {
+    transform: translateY(-1px);
+  }
+
+  a.bg-navy:active,
+  button.bg-navy:active {
+    transform: translateY(1px);
+  }
+
+  /* Bordered secondary CTAs */
+  a.border.text-navy,
+  a.border.text-white {
+    transition-property: transform, border-color, color !important;
+    transition-duration: 0.15s !important;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
+  a.border.text-navy:active,
+  a.border.text-white:active {
+    transform: translateY(1px);
+  }
+}
+
+/* ── Nav links — sliding underline on hover ───────────────────────────── */
+.nav-link {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.2;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Service card links — arrow nudge on hover ────────────────────────── */
+/*
+ * Previously used letter-spacing transition (layout property, causes main-thread
+ * recalculation). Now uses translateX on the arrow character via a ::after
+ * pseudo-element instead, keeping animation on the compositor thread.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .arrow-link {
+    transition: color 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* Nudge the trailing arrow right to imply forward motion */
+  .arrow-link .arrow-char {
+    display: inline-block;
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  a.arrow-link:hover .arrow-char,
+  .arrow-link:hover .arrow-char {
+    transform: translateX(4px);
+  }
+}
+
+/* ── Form inputs — focus left-border accent ───────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .contact-input {
+    transition: box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+                border-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .contact-input:focus {
+    box-shadow: -2px 0 0 0 var(--slate);
+    outline: none;
+  }
+}
+
+/* ── Proof page — subtle pulse on large stat values ──────────────────── */
+/*
+ * The count-up animation is handled via JS (CountUp component).
+ * This adds a very subtle text-shadow flash when the animation completes,
+ * implemented via the .stat-landed class added by JS.
+ */

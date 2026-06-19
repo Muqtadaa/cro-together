@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Vercel
+.vercel
+
+# Local agent / skill tooling (not part of the site)
+.agents/
+.claude/
+skills-lock.json
+
+# OS / local files
+.DS_Store
+*.local
