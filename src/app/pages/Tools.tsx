@@ -3,6 +3,7 @@ import { serif, sans, tx } from "../../lib/typography";
 import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
 import { ExtensionGallery, type Screenshot } from "../components/extension-gallery";
+import { ToolsFeedbackForm } from "../components/tools-feedback-form";
 
 // Power Tools screenshots (polished marketing tiles) — full + thumbnail
 import ptBulk from "../../assets/extensions/power-tools/01-bulk.webp";
@@ -212,6 +213,34 @@ function ExtensionsSection() {
   );
 }
 
+function FeedbackSection() {
+  return (
+    <PageSection bg="beige" py="md" borderTop className="border-[rgba(0,0,0,0.08)]">
+      <div className="mx-auto grid max-w-[1000px] grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+        {/* Left: intro */}
+        <div className="lg:col-span-5">
+          <SectionHeader
+            eyebrow="Feedback"
+            title={<>Found a bug, or have <em style={{ fontStyle: "italic" }}>an idea?</em></>}
+            titleWeight={200}
+            size="md"
+          />
+          <p className="mt-5 text-text-body" style={tx.body}>
+            These tools get sharper when the people using them push back. Spotted something off, or want a feature? Tell me — I read every note, and it genuinely shapes what I build next.
+          </p>
+        </div>
+
+        {/* Right: form */}
+        <div className="lg:col-span-7">
+          <div className="rounded-lg bg-white p-8 shadow-sm sm:p-10">
+            <ToolsFeedbackForm />
+          </div>
+        </div>
+      </div>
+    </PageSection>
+  );
+}
+
 function FinalCTA() {
   return (
     <PageSection bg="cream" py="lg" narrow innerClassName="flex flex-col items-center gap-6 text-center">
@@ -249,6 +278,7 @@ export function Tools() {
     <>
       <HeroSection />
       <ExtensionsSection />
+      <FeedbackSection />
       <FinalCTA />
     </>
   );
