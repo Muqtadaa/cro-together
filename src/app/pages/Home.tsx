@@ -355,6 +355,75 @@ function ProofAboutSection() {
   );
 }
 
+function ToolsSection() {
+  const tools = [
+    { number: "01", name: "Optimizely Web QA Helper", tagline: "QA live experiments without leaving the page." },
+    { number: "02", name: "Optimizely Power Tools", tagline: "Bulk actions and shortcuts inside Optimizely." },
+  ];
+
+  return (
+    <PageSection bg="beige" py="lg" borderTop className="border-[rgba(0,0,0,0.06)]">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 mb-12">
+        <SectionHeader
+          eyebrow="Free Chrome Extensions"
+          title={<>I build the tools I{" "}<em style={{ fontStyle: "italic" }}>wish I had.</em></>}
+          titleWeight={200}
+          size="md"
+          description="Two free extensions for Optimizely power users — born from the QA and program-management friction I kept hitting myself."
+          className="max-w-[620px]"
+        />
+        <Link
+          to="/tools"
+          className="text-slate border-b border-[rgba(67,97,124,0.3)] pb-1 hover:border-slate transition-colors shrink-0"
+          style={{ fontFamily: sans, fontWeight: 200, fontSize: "15px", letterSpacing: "0.2px" }}
+        >
+          Explore the Tools →
+        </Link>
+      </div>
+
+      {/* Typographic list */}
+      <div className="flex flex-col">
+        {tools.map((t, i) => (
+          <RevealItem key={t.number} index={i}>
+            <Link
+              to="/tools"
+              className="group flex items-center gap-6 py-5 border-t border-[rgba(0,0,0,0.07)] hover:pl-1 transition-all duration-200"
+            >
+              <span
+                className="shrink-0 tabular-nums"
+                style={{ fontFamily: sans, fontWeight: 200, fontSize: "11px", color: "var(--slate)", letterSpacing: "1.4px" }}
+              >
+                {t.number}
+              </span>
+              <div className="h-px w-8 bg-[rgba(0,0,0,0.12)] shrink-0" />
+              <span
+                className="text-text-dark group-hover:text-slate transition-colors"
+                style={{ fontFamily: serif, fontWeight: 200, fontSize: "clamp(18px, 2vw, 24px)", lineHeight: "1.2" }}
+              >
+                {t.name}
+              </span>
+              <span
+                className="hidden md:block text-text-body ml-auto text-right"
+                style={{ fontFamily: serif, fontStyle: "italic", fontWeight: 400, fontSize: "15px", lineHeight: "1.4" }}
+              >
+                {t.tagline}
+              </span>
+              <span
+                className="text-slate opacity-0 group-hover:opacity-100 transition-opacity shrink-0 md:hidden"
+                style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px" }}
+              >
+                →
+              </span>
+            </Link>
+          </RevealItem>
+        ))}
+        <div className="border-t border-[rgba(0,0,0,0.07)]" />
+      </div>
+    </PageSection>
+  );
+}
+
 function FinalCTA() {
   return (
     <PageSection bg="cream" py="xl" narrow innerClassName="flex flex-col items-center gap-8 text-center">
@@ -391,6 +460,7 @@ export function Home() {
       <ServicesSection />
       <MethodSection />
       <ProofAboutSection />
+      <ToolsSection />
       <FinalCTA />
     </>
   );

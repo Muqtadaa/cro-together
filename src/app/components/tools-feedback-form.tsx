@@ -8,7 +8,7 @@ const FEEDBACK_ENDPOINT = "https://formspree.io/f/xlgyewlv";
 const TOOL_OPTIONS = [
   "Optimizely Web QA Helper",
   "Optimizely Power Tools",
-  "Both / general",
+  "Both / general feedback",
 ];
 
 const TYPE_OPTIONS = ["Bug report", "Feature request", "General feedback"];
@@ -142,7 +142,7 @@ export function ToolsFeedbackForm() {
           Thank you — noted.
         </h3>
         <p className="text-text-body" style={{ fontFamily: sans, fontWeight: 200, fontSize: "17px", lineHeight: "1.6", maxWidth: "40ch" }}>
-          Every note genuinely shapes what I build next. If you left an email, I'll follow up when it's relevant.
+          Your note's in my inbox. If you left an email, I'll follow up when it's relevant.
         </p>
       </div>
     );
@@ -184,7 +184,7 @@ export function ToolsFeedbackForm() {
         <input
           id="feedback-email"
           type="email"
-          placeholder="So I can follow up — optional"
+          placeholder="you@company.com — if you'd like a reply"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="contact-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
