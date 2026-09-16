@@ -7,6 +7,7 @@ import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
 import { Stat } from "../components/ui/stat";
 import { RevealItem } from "../../lib/reveal";
+import { SERVICES } from "../data/services";
 
 function HeroSection() {
   return (
@@ -170,15 +171,6 @@ function ProblemSection() {
 }
 
 function ServicesSection() {
-  const services = [
-    { number: "01", title: "Conversion Diagnostic" },
-    { number: "02", title: "Experimentation Roadmap" },
-    { number: "03", title: "A/B Testing & Personalization" },
-    { number: "04", title: "Qualitative UX Research Sprint" },
-    { number: "05", title: "Technical Implementation & Measurement" },
-    { number: "06", title: "Fractional CRO Advisory" },
-  ];
-
   return (
     <PageSection bg="beige" py="lg">
       {/* Header */}
@@ -201,10 +193,10 @@ function ServicesSection() {
 
       {/* Typographic list */}
       <div className="flex flex-col">
-        {services.map((s, i) => (
+        {SERVICES.map((s, i) => (
           <RevealItem key={s.number} index={i}>
             <Link
-              to={`/services?open=${s.number}`}
+              to={`/services#${s.slug}`}
               className="group flex items-center gap-6 py-5 border-t border-[rgba(0,0,0,0.07)] hover:pl-1 transition-all duration-200"
             >
               <span

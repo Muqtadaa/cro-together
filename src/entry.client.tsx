@@ -1,7 +1,6 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./app/App";
-import "./styles/index.css";
+import { StrictMode, startTransition } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { HydratedRouter } from "react-router/dom";
 
 // ── Console easter egg ──────────────────────────────────────────────────────
 // A quiet message for anyone curious enough to open the devtools.
@@ -16,8 +15,11 @@ console.log(
 );
 // ───────────────────────────────────────────────────────────────────────────
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+startTransition(() => {
+  hydrateRoot(
+    document,
+    <StrictMode>
+      <HydratedRouter />
+    </StrictMode>
+  );
+});

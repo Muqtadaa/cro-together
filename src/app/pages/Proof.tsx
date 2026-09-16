@@ -80,9 +80,9 @@ function FeaturedCase() {
 
           {/* The Challenge */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
+            <p className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
               The Challenge
-            </h3>
+            </p>
             <p className="text-text-body" style={tx.body}>
               The homepage relied on auto-scrolling carousels that users had learned to ignore. Banner blindness was suppressing click-through across every campaign — seasonal, promotional, and product-led alike.
             </p>
@@ -90,9 +90,9 @@ function FeaturedCase() {
 
           {/* The Approach */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
+            <p className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
               The Approach
-            </h3>
+            </p>
             <p className="text-text-body" style={tx.body}>
               I designed and validated a static bento-grid layout across five sequential seasonal campaigns — from Rocktober to Black Friday. Variation 1 of the Rocktober bento drove +117.03% All Panel CTR; the $10 Pays campaign peaked at +291.21%. The bento format was then adopted as the homepage standard.
             </p>
@@ -187,14 +187,14 @@ function DualCase() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Insight</h3>
+            <p className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Insight</p>
             <p className="text-[rgba(255,255,255,0.7)]" style={tx.bodyMd}>
               Out-of-stock product pages were a conversion black hole — users hit a dead end and left. Qualitative research revealed that users weren't opposed to alternatives; they simply weren't being offered any.
             </p>
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Outcome</h3>
+            <p className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Outcome</p>
             <p className="text-[rgba(255,255,255,0.7)]" style={tx.bodyMd}>
               Redesigned the OOS PDP to surface substitute products and flexible options. Product Web Orders lifted +8.68–11.19%, Online Checkout conversions +35.74%, and Reservations +27.53%. A dead end became a revenue touchpoint.
             </p>

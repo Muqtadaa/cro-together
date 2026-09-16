@@ -352,7 +352,7 @@ function ContactForm() {
             <path d="M5 13L9 17L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
-        <motion.h3
+        <motion.h2
           className="text-navy"
           style={{ fontFamily: "'Newsreader', serif", fontWeight: 400, fontSize: "32px" }}
           initial={{ opacity: 0, y: 16 }}
@@ -360,7 +360,7 @@ function ContactForm() {
           transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
         >
           Inquiry received.
-        </motion.h3>
+        </motion.h2>
         <motion.p
           className="text-text-body"
           style={tx.bodyLg}

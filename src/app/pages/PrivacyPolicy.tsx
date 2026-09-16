@@ -1,4 +1,6 @@
+import { Link } from "react-router";
 import { serif, sans } from "../../lib/typography";
+import { PageSection } from "../components/ui/page-section";
 
 export function PrivacyPolicy() {
   const headingStyle: React.CSSProperties = {
@@ -38,8 +40,8 @@ export function PrivacyPolicy() {
   ];
 
   return (
-    <main className="bg-tan min-h-screen">
-      <div className="max-w-[760px] mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <PageSection bg="tan" py="lg" narrow className="min-h-screen" innerClassName="max-w-[760px]">
+      <div>
         {/* Header */}
         <div className="mb-12">
           <span
@@ -83,13 +85,13 @@ export function PrivacyPolicy() {
             </h2>
             <p className="text-text-body" style={bodyStyle}>
               If you have any questions about this privacy policy, you are welcome to get in touch via the{" "}
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="text-navy underline underline-offset-2 hover:opacity-60 transition-opacity"
                 style={{ fontFamily: sans, fontWeight: 300 }}
               >
                 contact page
-              </a>
+              </Link>
               .
             </p>
           </section>
@@ -104,6 +106,6 @@ export function PrivacyPolicy() {
           </p>
         </div>
       </div>
-    </main>
+    </PageSection>
   );
 }

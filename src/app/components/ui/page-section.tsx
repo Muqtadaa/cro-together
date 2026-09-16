@@ -14,6 +14,7 @@ const BG = {
   cream: "bg-cream",
   navy: "bg-navy",
   "navy-mid": "bg-navy-mid",
+  tan: "bg-tan",
   white: "bg-white",
 } as const;
 

@@ -186,12 +186,12 @@ function ExtensionCard({ ext }: { ext: ExtensionData }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
             {ext.features.map((f) => (
               <div key={f.title} className="flex flex-col gap-1.5">
-                <span className="text-navy" style={{ fontFamily: sans, fontWeight: 400, fontSize: "14px", letterSpacing: "0.01em" }}>
+                <h3 className="text-navy" style={{ fontFamily: sans, fontWeight: 400, fontSize: "14px", lineHeight: "1.5", letterSpacing: "0.01em" }}>
                   {f.title}
-                </span>
-                <span style={{ fontFamily: sans, fontWeight: 200, fontSize: "13.5px", lineHeight: "1.55", color: "var(--text-body)" }}>
+                </h3>
+                <p style={{ fontFamily: sans, fontWeight: 200, fontSize: "13.5px", lineHeight: "1.55", color: "var(--text-body)" }}>
                   {f.detail}
-                </span>
+                </p>
               </div>
             ))}
           </div>

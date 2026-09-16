@@ -158,7 +158,7 @@ export function ToolsFeedbackForm() {
         aria-hidden="true"
         value={form._gotcha}
         onChange={(e) => setForm({ ...form, _gotcha: e.target.value })}
-        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+        className="honeypot"
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
