@@ -3,6 +3,10 @@ node_modules/
 
 # Build output
 dist/
+build/
+
+# React Router typegen (framework mode)
+.react-router/
 
 # Vercel
 .vercel

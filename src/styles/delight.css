@@ -89,16 +89,25 @@
   }
 }
 
-/* ── Form inputs — focus left-border accent ───────────────────────────── */
+/* ── Form inputs — focus left-border accent + visible focus ring ─────── */
+/*
+ * The left-border accent shows on any focus; the outline only on
+ * :focus-visible so keyboard users always get a ring (WCAG 2.4.7) while
+ * mouse clicks keep the quieter accent. Never remove the outline entirely.
+ */
+.contact-input:focus {
+  box-shadow: -2px 0 0 0 var(--slate);
+}
+
+.contact-input:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .contact-input {
     transition: box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1),
                 border-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .contact-input:focus {
-    box-shadow: -2px 0 0 0 var(--slate);
-    outline: none;
   }
 }
 

@@ -23,7 +23,6 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(0,0,0,0.1)",
   padding: "12px 16px",
   width: "100%",
-  outline: "none",
   color: "var(--text-dark)",
 };
 

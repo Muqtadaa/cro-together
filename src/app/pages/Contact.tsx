@@ -118,7 +118,6 @@ function MultiSelect({
           border: "1px solid rgba(0,0,0,0.1)",
           padding: "12px 40px 12px 16px",
           width: "100%",
-          outline: "none",
           color: selected.length === 0 ? "var(--text-muted)" : "var(--text-dark)",
           textAlign: "left",
           position: "relative",
@@ -324,7 +323,6 @@ function ContactForm() {
     border: "1px solid rgba(0,0,0,0.1)",
     padding: "12px 16px",
     width: "100%",
-    outline: "none",
     color: "var(--text-dark)",
   };
 
