@@ -1,6 +1,8 @@
 import { Link } from "react-router";
-import imgChart from "../../assets/analytics-tablet.jpg";
-import imgSaaS from "../../assets/lightbulb.jpg";
+import imgChart800 from "../../assets/analytics-tablet-800.webp";
+import imgChart1600 from "../../assets/analytics-tablet-1600.webp";
+import imgSaaS800 from "../../assets/lightbulb-800.webp";
+import imgSaaS1600 from "../../assets/lightbulb-1600.webp";
 import { serif, sans, tx } from "../../lib/typography";
 import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
@@ -51,11 +53,16 @@ function FeaturedCase() {
         {/* Left: Image */}
         <div className="lg:col-span-7 rounded-lg overflow-hidden bg-tan" style={{ height: "430px" }}>
           <img
-            src={imgChart}
-            alt="Bento panel engagement lift"
+            src={imgChart1600}
+            srcSet={`${imgChart800} 800w, ${imgChart1600} 1600w`}
+            sizes="(min-width: 1280px) 700px, (min-width: 1024px) 58vw, 100vw"
+            width={1600}
+            height={914}
+            alt=""
             className="w-full h-full object-cover"
             style={{ filter: "saturate(0)", objectPosition: "center" }}
             loading="lazy"
+            decoding="async"
           />
         </div>
 
@@ -80,9 +87,9 @@ function FeaturedCase() {
 
           {/* The Challenge */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
+            <p className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
               The Challenge
-            </h3>
+            </p>
             <p className="text-text-body" style={tx.body}>
               The homepage relied on auto-scrolling carousels that users had learned to ignore. Banner blindness was suppressing click-through across every campaign — seasonal, promotional, and product-led alike.
             </p>
@@ -90,9 +97,9 @@ function FeaturedCase() {
 
           {/* The Approach */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
+            <p className="text-slate uppercase" style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.5px" }}>
               The Approach
-            </h3>
+            </p>
             <p className="text-text-body" style={tx.body}>
               I designed and validated a static bento-grid layout across five sequential seasonal campaigns — from Rocktober to Black Friday. Variation 1 of the Rocktober bento drove +117.03% All Panel CTR; the $10 Pays campaign peaked at +291.21%. The bento format was then adopted as the homepage standard.
             </p>
@@ -137,11 +144,16 @@ function DualCase() {
 
           <div className="rounded-lg overflow-hidden bg-tan-light relative" style={{ height: "300px" }}>
             <img
-              src={imgSaaS}
-              alt="Personalised homepage panels"
+              src={imgSaaS1600}
+              srcSet={`${imgSaaS800} 800w, ${imgSaaS1600} 1600w`}
+              sizes="(min-width: 1280px) 600px, (min-width: 1024px) 50vw, 100vw"
+              width={1600}
+              height={897}
+              alt=""
               className="absolute inset-0 w-full h-full object-cover"
               style={{ filter: "saturate(0.2)" }}
               loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -187,14 +199,14 @@ function DualCase() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Insight</h3>
+            <p className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Insight</p>
             <p className="text-[rgba(255,255,255,0.7)]" style={tx.bodyMd}>
               Out-of-stock product pages were a conversion black hole — users hit a dead end and left. Qualitative research revealed that users weren't opposed to alternatives; they simply weren't being offered any.
             </p>
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Outcome</h3>
+            <p className="text-text-muted-invert uppercase" style={tx.eyebrow}>The Outcome</p>
             <p className="text-[rgba(255,255,255,0.7)]" style={tx.bodyMd}>
               Redesigned the OOS PDP to surface substitute products and flexible options. Product Web Orders lifted +8.68–11.19%, Online Checkout conversions +35.74%, and Reservations +27.53%. A dead end became a revenue touchpoint.
             </p>

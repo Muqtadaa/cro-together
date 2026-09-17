@@ -89,16 +89,25 @@
   }
 }
 
-/* ── Form inputs — focus left-border accent ───────────────────────────── */
+/* ── Form inputs — focus left-border accent + visible focus ring ─────── */
+/*
+ * The left-border accent shows on any focus; the outline only on
+ * :focus-visible so keyboard users always get a ring (WCAG 2.4.7) while
+ * mouse clicks keep the quieter accent. Never remove the outline entirely.
+ */
+.contact-input:focus {
+  box-shadow: -2px 0 0 0 var(--slate);
+}
+
+.contact-input:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .contact-input {
     transition: box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1),
                 border-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .contact-input:focus {
-    box-shadow: -2px 0 0 0 var(--slate);
-    outline: none;
   }
 }
 
@@ -108,3 +117,109 @@
  * This adds a very subtle text-shadow flash when the animation completes,
  * implemented via the .stat-landed class added by JS.
  */
+
+/* ── Scroll reveal — CSS-first progressive enhancement ────────────────── */
+/*
+ * <Reveal>/<RevealItem> (src/lib/reveal.tsx) render visible HTML with a
+ * data-inview flag. The fade-up only engages when the document carries the
+ * `js` class (set inline in src/root.tsx before first paint) and motion is
+ * allowed, so prerendered pages never ship hidden content to crawlers,
+ * agents, or browsers without JavaScript.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .reveal {
+    transition:
+      opacity 0.55s cubic-bezier(0.25, 1, 0.5, 1) var(--reveal-delay, 0s),
+      transform 0.55s cubic-bezier(0.25, 1, 0.5, 1) var(--reveal-delay, 0s);
+  }
+
+  html.js .reveal:not([data-inview="true"]) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* ── Services accordion — native <details> ────────────────────────────── */
+.service-item {
+  scroll-margin-top: 5rem; /* clears the sticky nav when deep-linked by hash */
+}
+
+.service-summary {
+  list-style: none;
+}
+
+.service-summary::-webkit-details-marker {
+  display: none;
+}
+
+.service-summary:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 2px;
+}
+
+.service-summary:hover .service-title {
+  opacity: 0.8;
+}
+
+.service-item[open] > .service-summary .service-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .service-chevron {
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .service-item[open] > .service-body {
+    animation: service-open 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  @keyframes service-open {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* ── Forms — honeypot field ───────────────────────────────────────────── */
+/* Off-screen and invisible to people; bots that fill it are dropped by Formspree. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* ── Forms — checkboxes and submit ────────────────────────────────────── */
+.contact-checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--navy);
+}
+
+.contact-checkbox:focus-visible,
+.contact-submit:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 2px;
+}
+
+/* ── Forms — WebMCP pending state ─────────────────────────────────────── */
+/* A supporting browser applies these while an agent has filled the form and
+   is waiting for the person to confirm. Kept as separate rules: an unknown
+   pseudo-class would invalidate a shared selector list elsewhere. */
+form:tool-form-active {
+  outline: 2px solid var(--slate);
+  outline-offset: 12px;
+}
+
+button:tool-submit-active {
+  box-shadow: 0 0 0 4px var(--badge-blue);
+}

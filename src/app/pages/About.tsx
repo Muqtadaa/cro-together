@@ -4,6 +4,7 @@ import svgPaths from "../../imports/svg-7e3xnlrxqu";
 import { serif, sans, tx } from "../../lib/typography";
 import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
+import { PORTFOLIO_URL } from "../../seo/routes";
 
 function HeroSection() {
   return (
@@ -42,7 +43,6 @@ function BioSection() {
           alt="Muqtadaa Miandara"
           className="w-full h-full object-cover"
           style={{ objectPosition: "center top" }}
-          fetchPriority="high"
           loading="eager"
         />
       </div>
@@ -59,13 +59,24 @@ function BioSection() {
         <div className="flex flex-col gap-6">
           {[
             "My approach is rooted in the belief that experimentation is not a siloed task, but a thread that must weave through the entire product lifecycle. With a background spanning UX research, deep analytics, and front-end engineering, I sit at the intersection of what is desirable, what is measurable, and what is possible.",
-            "I have spent a decade refining a workflow that eliminates friction between stakeholders. By speaking the language of designers, developers, and executives simultaneously, I ensure that strategic insights don't just sit in a slide deck — they manifest in the product.",
+            "Since 2021 I have been refining a workflow that eliminates friction between stakeholders. By speaking the language of designers, developers, and executives simultaneously, I ensure that strategic insights don't just sit in a slide deck — they manifest in the product.",
             "Clients partner with me not just for the data I produce, but for the senior judgment I bring to every decision. It's about knowing which experiments are worth running and, more importantly, which ones are not.",
           ].map((para) => (
             <p key={para.slice(0, 20)} className="text-text-body" style={tx.bodyLg}>
               {para}
             </p>
           ))}
+          <p className="text-text-body" style={tx.bodyLg}>
+            Away from the data I draw, design and run a D&amp;D table; that side of me lives on{" "}
+            <a
+              href={PORTFOLIO_URL}
+              rel="me noopener"
+              className="text-navy underline underline-offset-4 hover:opacity-60 transition-opacity"
+            >
+              my personal site
+            </a>
+            .
+          </p>
         </div>
       </div>
     </PageSection>

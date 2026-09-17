@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { sans } from "../../lib/typography";
+import { serif, sans } from "../../lib/typography";
 
 // Dedicated Formspree form for Tools feedback (separate from the Contact inquiry form).
 const FEEDBACK_ENDPOINT = "https://formspree.io/f/xlgyewlv";
@@ -23,7 +23,6 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(0,0,0,0.1)",
   padding: "12px 16px",
   width: "100%",
-  outline: "none",
   color: "var(--text-dark)",
 };
 
@@ -41,12 +40,14 @@ const labelStyle: React.CSSProperties = {
 /** Native <select> styled to match the form inputs, with a custom chevron. */
 function Select({
   id,
+  name,
   label,
   value,
   onChange,
   options,
 }: {
   id: string;
+  name: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -58,6 +59,7 @@ function Select({
       <div className="relative">
         <select
           id={id}
+          name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="appearance-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
@@ -138,7 +140,7 @@ export function ToolsFeedbackForm() {
             <path d="M5 13L9 17L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
-        <h3 className="text-navy" style={{ fontFamily: "'Newsreader', serif", fontWeight: 400, fontSize: "28px" }}>
+        <h3 className="text-navy" style={{ fontFamily: serif, fontWeight: 400, fontSize: "28px" }}>
           Thank you — noted.
         </h3>
         <p className="text-text-body" style={{ fontFamily: sans, fontWeight: 200, fontSize: "17px", lineHeight: "1.6", maxWidth: "40ch" }}>
@@ -159,12 +161,13 @@ export function ToolsFeedbackForm() {
         aria-hidden="true"
         value={form._gotcha}
         onChange={(e) => setForm({ ...form, _gotcha: e.target.value })}
-        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+        className="honeypot"
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Select
           id="feedback-tool"
+          name="tool"
           label="Which tool"
           value={form.tool}
           onChange={(v) => setForm({ ...form, tool: v })}
@@ -172,6 +175,7 @@ export function ToolsFeedbackForm() {
         />
         <Select
           id="feedback-type"
+          name="type"
           label="Type of feedback"
           value={form.type}
           onChange={(v) => setForm({ ...form, type: v })}
@@ -183,6 +187,7 @@ export function ToolsFeedbackForm() {
         <label htmlFor="feedback-email" style={labelStyle}>Email (optional)</label>
         <input
           id="feedback-email"
+          name="email"
           type="email"
           placeholder="you@company.com — if you'd like a reply"
           value={form.email}
@@ -199,6 +204,7 @@ export function ToolsFeedbackForm() {
         </label>
         <textarea
           id="feedback-message"
+          name="message"
           placeholder="What did you run into, or what would make these better?"
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}

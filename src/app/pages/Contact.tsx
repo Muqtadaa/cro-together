@@ -1,228 +1,16 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { serif, sans, tx } from "../../lib/typography";
 import { PageSection } from "../components/ui/page-section";
-
-const SERVICE_OPTIONS = [
-  "Conversion Diagnostic",
-  "Experimentation Roadmap",
-  "A/B Testing & Personalization",
-  "Qualitative UX Research Sprint",
-  "Technical Implementation & Measurement",
-  "Fractional CRO Advisory",
-];
-
-const LISTBOX_ID = "service-listbox";
-const TRIGGER_ID = "service-trigger";
-
-function MultiSelect({
-  options,
-  selected,
-  onChange,
-}: {
-  options: string[];
-  selected: string[];
-  onChange: (val: string[]) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState<number>(-1);
-  const ref = useRef<HTMLDivElement>(null);
-  const listboxRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  // Close on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setActiveIndex(-1);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  // Scroll active option into view
-  useEffect(() => {
-    if (open && activeIndex >= 0 && listboxRef.current) {
-      const items = listboxRef.current.querySelectorAll('[role="option"]');
-      items[activeIndex]?.scrollIntoView({ block: "nearest" });
-    }
-  }, [activeIndex, open]);
-
-  const toggle = useCallback((option: string) => {
-    if (selected.includes(option)) {
-      onChange(selected.filter((s) => s !== option));
-    } else {
-      onChange([...selected, option]);
-    }
-  }, [selected, onChange]);
-
-  function handleTriggerKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
-      e.preventDefault();
-      setOpen(true);
-      setActiveIndex(0);
-    } else if (e.key === "Escape") {
-      setOpen(false);
-      setActiveIndex(-1);
-    }
-  }
-
-  function handleListKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIndex((i) => Math.min(i + 1, options.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIndex((i) => Math.max(i - 1, 0));
-    } else if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      if (activeIndex >= 0) toggle(options[activeIndex]);
-    } else if (e.key === "Escape" || e.key === "Tab") {
-      setOpen(false);
-      setActiveIndex(-1);
-      triggerRef.current?.focus();
-    }
-  }
-
-  const displayText =
-    selected.length === 0
-      ? "Select all that apply…"
-      : selected.length === 1
-      ? selected[0]
-      : `${selected.length} services selected`;
-
-  const activeOptionId = activeIndex >= 0 ? `service-option-${activeIndex}` : undefined;
-
-  return (
-    <div ref={ref} className="relative">
-      {/* Trigger */}
-      <button
-        ref={triggerRef}
-        id={TRIGGER_ID}
-        type="button"
-        role="combobox"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={LISTBOX_ID}
-        aria-labelledby="services-label"
-        aria-activedescendant={activeOptionId}
-        onClick={() => { setOpen((o) => !o); setActiveIndex(open ? -1 : 0); }}
-        onKeyDown={handleTriggerKeyDown}
-        style={{
-          fontFamily: sans,
-          fontWeight: 200,
-          fontSize: "16px",
-          background: "white",
-          border: "1px solid rgba(0,0,0,0.1)",
-          padding: "12px 40px 12px 16px",
-          width: "100%",
-          outline: "none",
-          color: selected.length === 0 ? "var(--text-muted)" : "var(--text-dark)",
-          textAlign: "left",
-          position: "relative",
-        }}
-      >
-        {displayText}
-        <span
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            right: "14px",
-            top: "50%",
-            transform: open ? "translateY(-50%) rotate(180deg)" : "translateY(-50%)",
-            transition: "transform 0.15s ease",
-            pointerEvents: "none",
-          }}
-        >
-          <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-            <path d="M1 1L6 6L11 1" stroke="var(--text-body)" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </span>
-      </button>
-
-      {/* Listbox */}
-      {open && (
-        <div
-          ref={listboxRef}
-          id={LISTBOX_ID}
-          role="listbox"
-          aria-multiselectable="true"
-          aria-labelledby={TRIGGER_ID}
-          tabIndex={-1}
-          onKeyDown={handleListKeyDown}
-          className="absolute z-50 w-full bg-white border border-[rgba(0,0,0,0.1)] shadow-md"
-          style={{ top: "calc(100% + 2px)", maxHeight: "280px", overflowY: "auto" }}
-        >
-          {options.map((option, i) => {
-            const checked = selected.includes(option);
-            const isActive = i === activeIndex;
-            return (
-              <div
-                key={option}
-                id={`service-option-${i}`}
-                role="option"
-                aria-selected={checked}
-                onClick={() => toggle(option)}
-                onMouseEnter={() => setActiveIndex(i)}
-                className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors"
-                style={{ background: isActive ? "var(--beige)" : "white" }}
-              >
-                {/* Checkbox indicator */}
-                <span
-                  aria-hidden="true"
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    flexShrink: 0,
-                    border: checked ? "none" : "1px solid rgba(0,0,0,0.2)",
-                    background: checked ? "#060e1a" : "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {checked && (
-                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                      <path d="M1 4L4 7L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </span>
-                <span style={{ fontFamily: sans, fontWeight: 200, fontSize: "15px", color: "var(--text-dark)" }}>
-                  {option}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Selected tags */}
-      {selected.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2" role="group" aria-label="Selected services">
-          {selected.map((s) => (
-            <span
-              key={s}
-              className="inline-flex items-center gap-1 bg-navy text-white px-3 py-1"
-              style={tx.label}
-            >
-              {s}
-              <button
-                type="button"
-                aria-label={`Remove ${s}`}
-                onClick={() => toggle(s)}
-                className="ml-1 hover:opacity-70 transition-opacity leading-none"
-              >
-                ×
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+import { INQUIRY_ENDPOINT, INQUIRY_SERVICES, submitInquiry, type InquiryInput } from "../../lib/inquiry";
+import {
+  INQUIRY_PARAMS,
+  INQUIRY_TOOL_DESCRIPTION,
+  INQUIRY_TOOL_NAME,
+  inquiryFailedText,
+  inquirySentText,
+  useDraftInquiryTool,
+} from "../../lib/webmcp";
 
 function HeroSection() {
   return (
@@ -268,82 +56,84 @@ function HeroSection() {
   );
 }
 
-// Replace YOUR_FORMSPREE_ID with the ID from your Formspree dashboard (e.g. "xabcdef1")
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzdkaokr";
+const inputStyle: React.CSSProperties = {
+  fontFamily: sans,
+  fontWeight: 200,
+  fontSize: "16px",
+  background: "white",
+  border: "1px solid rgba(0,0,0,0.1)",
+  padding: "12px 16px",
+  width: "100%",
+  color: "var(--text-dark)",
+};
 
+const labelStyle: React.CSSProperties = {
+  fontFamily: sans,
+  fontWeight: 200,
+  fontSize: "12px",
+  color: "var(--text-body)",
+  textTransform: "uppercase",
+  letterSpacing: "0.5px",
+  display: "block",
+  marginBottom: "8px",
+};
+
+const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
+
+/**
+ * A native, uncontrolled form. The `action`/`method` pair lets it post to
+ * Formspree without JavaScript; the `toolname`/`tooldescription`/
+ * `toolparamdescription` attributes describe it to WebMCP browsers, which
+ * fill it in and then hand the submit button to the person (there is
+ * deliberately no `toolautosubmit`). The imperative `draft_inquiry` tool
+ * (src/lib/webmcp.ts) writes into these same controls and also stops at the
+ * submit button. The submit handler is the one path both a person and an
+ * agent go through, and only a submit sends anything.
+ */
 function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    website: "",
-    helpWith: [] as string[],
-    description: "",
-  });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitting(true);
+    const data = new FormData(e.currentTarget);
+    const input: InquiryInput = { ...Object.fromEntries(data), services: data.getAll("services") };
     setError(null);
+    setSubmitting(true);
 
-    try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          company: formData.company,
-          website: formData.website,
-          services: formData.helpWith.join(", "),
-          message: formData.description,
-        }),
-      });
+    const pending = submitInquiry(input);
 
-      if (response.ok) {
-        setSubmitted(true);
-      } else {
-        const data = await response.json();
-        setError(data?.errors?.[0]?.message ?? "Something went wrong. Please try again.");
-      }
-    } catch {
-      setError("Network error — please check your connection and try again.");
-    } finally {
-      setSubmitting(false);
+    // An agent-invoked submit gets a structured result instead of a navigation;
+    // the page still updates so the person sees the same outcome.
+    const native = e.nativeEvent as SubmitEvent;
+    if (native.agentInvoked && typeof native.respondWith === "function") {
+      native.respondWith(
+        pending.then(
+          (inquiry) => ({ content: [{ type: "text", text: inquirySentText(inquiry.name) }] }),
+          (err: unknown) => ({
+            content: [{ type: "text", text: inquiryFailedText(err instanceof Error ? err.message : "Something went wrong.") }],
+            isError: true,
+          }),
+        ),
+      );
     }
-  };
 
-  const inputStyle: React.CSSProperties = {
-    fontFamily: sans,
-    fontWeight: 200,
-    fontSize: "16px",
-    background: "white",
-    border: "1px solid rgba(0,0,0,0.1)",
-    padding: "12px 16px",
-    width: "100%",
-    outline: "none",
-    color: "var(--text-dark)",
+    pending
+      .then(
+        () => setSubmitted(true),
+        (err: unknown) => setError(err instanceof Error && err.message ? err.message : "Something went wrong. Please try again."),
+      )
+      .finally(() => setSubmitting(false));
   };
-
-  const labelStyle: React.CSSProperties = {
-    fontFamily: sans,
-    fontWeight: 200,
-    fontSize: "12px",
-    color: "var(--text-body)",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    display: "block",
-    marginBottom: "8px",
-  };
-
-  const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 text-center">
+      <div
+        className="flex flex-col items-center justify-center min-h-[400px] gap-6 text-center"
+        role="status"
+        aria-live="polite"
+      >
         <motion.div
           className="w-16 h-16 bg-navy rounded-full flex items-center justify-center"
           initial={{ opacity: 0, scale: 0.7 }}
@@ -354,15 +144,15 @@ function ContactForm() {
             <path d="M5 13L9 17L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
-        <motion.h3
+        <motion.h2
           className="text-navy"
-          style={{ fontFamily: "'Newsreader', serif", fontWeight: 400, fontSize: "32px" }}
+          style={{ fontFamily: serif, fontWeight: 400, fontSize: "32px" }}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
         >
           Inquiry received.
-        </motion.h3>
+        </motion.h2>
         <motion.p
           className="text-text-body"
           style={tx.bodyLg}
@@ -377,34 +167,67 @@ function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form
+      action={INQUIRY_ENDPOINT}
+      method="post"
+      toolname={INQUIRY_TOOL_NAME}
+      tooldescription={INQUIRY_TOOL_DESCRIPTION}
+      aria-describedby="contact-assistant-note"
+      onSubmit={handleSubmit}
+      className="contact-form flex flex-col gap-6"
+    >
+      {/* Honeypot field — hidden from people, catches bots */}
+      <input
+        type="text"
+        name="_gotcha"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        defaultValue=""
+        toolparamdescription={INQUIRY_PARAMS._gotcha}
+        className="honeypot"
+      />
+      {/* Subject line for the no-JS post; the JS path sets its own in submitInquiry() */}
+      <input
+        type="hidden"
+        name="_subject"
+        value="New inquiry from crotogether.com"
+        toolparamdescription={INQUIRY_PARAMS._subject}
+      />
+
       {/* Row 1: Name + Email */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="contact-name" style={labelStyle}>Name</label>
+          <label htmlFor="contact-name" style={labelStyle}>
+            Name <span style={{ color: "var(--slate)" }}>*</span>
+          </label>
           <input
             id="contact-name"
+            name="name"
             type="text"
             placeholder="Jane Doe"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="contact-input"
             style={inputStyle}
             autoComplete="name"
+            maxLength={120}
+            toolparamdescription={INQUIRY_PARAMS.name}
             required
           />
         </div>
         <div>
-          <label htmlFor="contact-email" style={labelStyle}>Work Email</label>
+          <label htmlFor="contact-email" style={labelStyle}>
+            Work Email <span style={{ color: "var(--slate)" }}>*</span>
+          </label>
           <input
             id="contact-email"
+            name="email"
             type="email"
-            placeholder="jane@company.com"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="Where should I reply?"
             className="contact-input"
             style={inputStyle}
             autoComplete="email"
+            maxLength={254}
+            toolparamdescription={INQUIRY_PARAMS.email}
             required
           />
         </div>
@@ -416,55 +239,78 @@ function ContactForm() {
           <label htmlFor="contact-company" style={labelStyle}>Company</label>
           <input
             id="contact-company"
+            name="company"
             type="text"
             placeholder="Acme Inc."
-            value={formData.company}
-            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+            className="contact-input"
             style={inputStyle}
             autoComplete="organization"
+            maxLength={120}
+            toolparamdescription={INQUIRY_PARAMS.company}
           />
         </div>
         <div>
           <label htmlFor="contact-website" style={labelStyle}>Website URL</label>
           <input
             id="contact-website"
+            name="website"
             type="url"
             placeholder="https://"
-            value={formData.website}
-            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+            className="contact-input"
             style={inputStyle}
             autoComplete="url"
+            maxLength={300}
+            toolparamdescription={INQUIRY_PARAMS.website}
           />
         </div>
       </div>
 
-      {/* Multi-select: What do you need help with? */}
-      <div>
-        <label id="services-label" style={labelStyle}>What do you need help with?</label>
-        <MultiSelect
-          options={SERVICE_OPTIONS}
-          selected={formData.helpWith}
-          onChange={(val) => setFormData({ ...formData, helpWith: val })}
-        />
-      </div>
+      {/* Services: six native checkboxes */}
+      <fieldset className="contact-fieldset m-0 min-w-0 border-0 p-0">
+        <legend style={{ ...labelStyle, padding: 0 }}>What do you need help with?</legend>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+          {INQUIRY_SERVICES.map((service, i) => (
+            <label
+              key={service}
+              htmlFor={`contact-service-${i}`}
+              className="flex items-start gap-3 cursor-pointer"
+              style={{ fontFamily: sans, fontWeight: 200, fontSize: "15px", lineHeight: "1.4", color: "var(--text-dark)" }}
+            >
+              <input
+                id={`contact-service-${i}`}
+                name="services"
+                type="checkbox"
+                value={service}
+                className="contact-checkbox"
+                toolparamdescription={INQUIRY_PARAMS.services}
+              />
+              <span>{service}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       {/* Brief description */}
       <div>
-        <label htmlFor="contact-description" style={labelStyle}>Brief Description of Your Challenge</label>
+        <label htmlFor="contact-message" style={labelStyle}>
+          Brief Description of Your Challenge <span style={{ color: "var(--slate)" }}>*</span>
+        </label>
         <textarea
-          id="contact-description"
+          id="contact-message"
+          name="message"
           placeholder="Tell me about your conversion roadblocks..."
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={5}
           className="contact-input"
           style={{ ...inputStyle, resize: "vertical" }}
+          maxLength={5000}
+          toolparamdescription={INQUIRY_PARAMS.message}
+          required
         />
       </div>
 
       {/* Error message */}
       {error && (
-        <p style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", color: "#b91c1c" }}>
+        <p role="alert" style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", color: "#b91c1c" }}>
           {error}
         </p>
       )}
@@ -473,7 +319,7 @@ function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-5 bg-navy text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        className="contact-submit w-full py-5 bg-navy text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ fontFamily: sans, fontWeight: 200, fontSize: "16px", letterSpacing: "0.5px", textTransform: "uppercase" }}
       >
         {submitting ? "Sending…" : "Submit Inquiry"}
@@ -483,6 +329,8 @@ function ContactForm() {
 }
 
 export function Contact() {
+  useDraftInquiryTool();
+
   return (
     <>
       <HeroSection />
@@ -492,6 +340,14 @@ export function Contact() {
           <div className="bg-white p-10 rounded-lg shadow-sm">
             <ContactForm />
           </div>
+          <p
+            id="contact-assistant-note"
+            className="text-text-muted mt-6"
+            style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", lineHeight: "1.6" }}
+          >
+            Using an AI assistant? In browsers that support WebMCP it can fill in this form for you. Nothing is sent
+            until you check it and press Submit.
+          </p>
         </div>
       </PageSection>
     </>

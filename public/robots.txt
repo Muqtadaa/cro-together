@@ -1,0 +1,47 @@
+# CRO Together - https://crotogether.com
+# Search engines and user-initiated fetchers are welcome everywhere.
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: *
+Allow: /
+
+# AI training crawlers (not search or user fetchers).
+# Default is Allow. To opt out of model training, change the single
+# "Allow: /" line at the end of this stanza to "Disallow: /".
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bytespider
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: https://crotogether.com/sitemap.xml

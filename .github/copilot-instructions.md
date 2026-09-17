@@ -11,7 +11,7 @@ Founders, bootstrappers, and growth-focused teams at businesses of varying matur
 The brand is a partner, not a vendor. It leads with empathy and intellectual curiosity rather than credentials and case-study metrics alone. The tone is warm and direct — never corporate, never hype-driven. It should feel like talking to a smart colleague who genuinely cares about your business.
 
 ### Aesthetic Direction
-Editorial minimalism with warmth. The palette anchors on dark navy (`#060e1a`), cream (`#fdf9f4`), warm beige (`#f7f3ee` / `#f1ede8`), and gold accents (`#ffddb1`). Muted blue (`#43617c`) plays a supporting role for badges and secondary elements.
+Editorial minimalism with warmth. The palette anchors on dark navy (`#060e1a`), cream (`#f5f0e8`), warm beige (`#ede8e0` / `#f1ede8`), and gold accents (`#ffddb1`). Muted blue (`#43617c`) plays a supporting role for badges and secondary elements.
 
 Typography pairs Newsreader (serif — for authority, humanity, and editorial weight) with Manrope (sans — for clarity, utility, and modernity). Headlines use fluid sizing via `clamp()` and negative letter-spacing for a refined, intentional feel.
 
@@ -25,16 +25,21 @@ WCAG AAA. All foreground/background color combinations must meet the 7:1 contras
 ### Design System Tokens
 | Token | Value | Usage |
 |---|---|---|
-| Dark navy | `#060e1a` | Primary text, dark section backgrounds, CTA buttons |
-| Cream | `#fdf9f4` | Nav, page background, primary section fill |
-| Warm beige | `#f7f3ee` | Alternate section backgrounds |
-| Tan | `#f1ede8` | Footer, image backgrounds |
-| Gold accent | `#ffddb1` | Highlights in dark sections, CTA accents |
-| Muted blue | `#43617c` | Secondary elements, badge text |
-| Blue badge bg | `#c1e0ff` | Info badge backgrounds |
-| Body gray | `#45474c` | Body copy |
-| Muted gray | `#64748b` / `#717182` | Secondary labels |
-| Destructive | `#d4183d` | Error states |
+| Dark navy (`--navy`) | `#060e1a` | Primary text, dark section backgrounds, CTA buttons |
+| Navy mid (`--navy-mid`) | `#1c2430` | Cards and panels on dark sections |
+| Cream (`--cream`) | `#f5f0e8` | Nav, page background, primary section fill |
+| Warm beige (`--beige`) | `#ede8e0` | Alternate section backgrounds |
+| Tan (`--tan`) | `#f1ede8` | Footer, image backgrounds |
+| Tan light (`--tan-light`) | `#ebe8e3` | Surfaces only, never under text |
+| Gold accent (`--gold`) | `#ffddb1` | Highlights in dark sections, CTA accents |
+| Muted blue (`--slate`) | `#43617c` | Secondary elements, eyebrows |
+| Slate dark (`--slate-dark`) | `#46647e` | Badge text on blue badge bg |
+| Blue badge bg (`--badge-blue`) | `#c1e0ff` | Info badge backgrounds |
+| Text dark (`--text-dark`) | `#1c1c19` | Headings and form values on light backgrounds |
+| Body gray (`--text-body`) | `#45474c` | Body copy |
+| Muted gray (`--text-muted`) | `#434c5e` | Secondary labels on light backgrounds (AAA on cream/tan) |
+| Muted gray, inverted (`--text-muted-invert`) | `#9aa3b2` | Secondary labels on navy (AAA on navy) |
+| Destructive (`--destructive`) | `#d4183d` | Error states |
 
 **Serif font:** Newsreader (200, 400, 600) — headlines, pull quotes, key metrics
 **Sans font:** Manrope (200, 300, 400) — body text, labels, UI copy

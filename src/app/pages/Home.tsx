@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import imgHero from "../../assets/hero.jpg";
+import imgHero800 from "../../assets/hero-800.webp";
+import imgHero1600 from "../../assets/hero-1600.webp";
 import imgProfile from "../../assets/profile.jpeg";
 import svgPaths from "../../imports/svg-oy3pdmbdew";
 import { serif, sans, tx } from "../../lib/typography";
@@ -7,6 +8,7 @@ import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
 import { Stat } from "../components/ui/stat";
 import { RevealItem } from "../../lib/reveal";
+import { SERVICES } from "../data/services";
 
 function HeroSection() {
   return (
@@ -48,12 +50,17 @@ function HeroSection() {
       {/* Right: Image */}
       <div className="lg:col-span-4 h-[480px] lg:h-[600px] rounded-sm overflow-hidden relative bg-tan-light">
         <img
-          src={imgHero}
-          alt="Hero"
+          src={imgHero1600}
+          srcSet={`${imgHero800} 800w, ${imgHero1600} 1600w`}
+          sizes="(min-width: 1024px) 33vw, 100vw"
+          width={1600}
+          height={1067}
+          alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-80"
           style={{ filter: "saturate(0)", mixBlendMode: "multiply" }}
           fetchPriority="high"
           loading="eager"
+          decoding="async"
         />
       </div>
     </PageSection>
@@ -170,15 +177,6 @@ function ProblemSection() {
 }
 
 function ServicesSection() {
-  const services = [
-    { number: "01", title: "Conversion Diagnostic" },
-    { number: "02", title: "Experimentation Roadmap" },
-    { number: "03", title: "A/B Testing & Personalization" },
-    { number: "04", title: "Qualitative UX Research Sprint" },
-    { number: "05", title: "Technical Implementation & Measurement" },
-    { number: "06", title: "Fractional CRO Advisory" },
-  ];
-
   return (
     <PageSection bg="beige" py="lg">
       {/* Header */}
@@ -201,10 +199,10 @@ function ServicesSection() {
 
       {/* Typographic list */}
       <div className="flex flex-col">
-        {services.map((s, i) => (
+        {SERVICES.map((s, i) => (
           <RevealItem key={s.number} index={i}>
             <Link
-              to={`/services?open=${s.number}`}
+              to={`/services#${s.slug}`}
               className="group flex items-center gap-6 py-5 border-t border-[rgba(0,0,0,0.07)] hover:pl-1 transition-all duration-200"
             >
               <span
@@ -223,6 +221,7 @@ function ServicesSection() {
               <span
                 className="text-slate opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                 style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px" }}
+                aria-hidden="true"
               >
                 →
               </span>
@@ -412,6 +411,7 @@ function ToolsSection() {
               <span
                 className="text-slate opacity-0 group-hover:opacity-100 transition-opacity shrink-0 md:hidden"
                 style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px" }}
+                aria-hidden="true"
               >
                 →
               </span>
