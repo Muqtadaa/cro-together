@@ -16,6 +16,12 @@
  *   - every 1600w WebP is under 250 KB and only the home hero is fetchPriority=high
  *   - the privacy page names Formspree and both forms; the footer links the
  *     portfolio and LinkedIn with rel="me"
+ *   - /contact is a native WebMCP form: action/method, toolname="submit_inquiry",
+ *     tooldescription, no toolautosubmit, the six named controls each with a
+ *     toolparamdescription, the six service checkboxes, a required message,
+ *     the _gotcha honeypot and _subject, live regions, and no email address;
+ *     the imperative tool descriptor matches the form (name, required, enum)
+ *   - the tools feedback form's controls carry name attributes
  */
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -23,6 +29,8 @@ import { fileURLToPath } from "node:url";
 import { parse } from "node-html-parser";
 import { SERVICES } from "../src/app/data/services.ts";
 import { absoluteUrl, getPage, LINKEDIN_URL, markdownPath, NOT_FOUND, ORG_ID, PERSON_ID, PORTFOLIO_URL, ROUTES, SITE_URL } from "../src/seo/routes.ts";
+import { INQUIRY_ENDPOINT, INQUIRY_SERVICES } from "../src/lib/inquiry.ts";
+import { INQUIRY_TOOL_NAME, inquiryTool } from "../src/lib/webmcp.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(root, "build/client");
@@ -166,6 +174,93 @@ function checkPageContent(pages) {
   if (/discovery call/i.test(privacy)) fail("/privacy: still mentions a discovery call");
 }
 
+const EMAIL_LIKE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|mailto:/i;
+
+function attr(tag, name) {
+  return tag.getAttribute(name) ?? null;
+}
+
+/** The contact page is a native form that WebMCP browsers can drive; check every hook it relies on. */
+function checkContactForm(pages) {
+  const html = pages.get("/contact") ?? "";
+  const doc = parse(html);
+  const main = doc.querySelector("main");
+  if (EMAIL_LIKE.test(main?.innerHTML ?? "")) fail("/contact: an email address is in the page copy");
+
+  const form = doc.querySelector(`form[toolname="${INQUIRY_TOOL_NAME}"]`);
+  if (!form) return fail(`/contact: no <form toolname="${INQUIRY_TOOL_NAME}">`);
+  if (attr(form, "action") !== INQUIRY_ENDPOINT) fail(`/contact: form action is ${attr(form, "action")}, expected ${INQUIRY_ENDPOINT}`);
+  if ((attr(form, "method") ?? "").toLowerCase() !== "post") fail("/contact: form method is not post");
+  if (!attr(form, "tooldescription")) fail("/contact: form has no tooldescription");
+  if (attr(form, "tooldescription") !== inquiryTool.description) fail("/contact: form tooldescription differs from the registered tool's description");
+  if (form.hasAttribute("toolautosubmit")) fail("/contact: form carries toolautosubmit (the person must confirm)");
+
+  const controls = form.querySelectorAll("input, textarea, select, button");
+  const byName = new Map();
+  for (const control of controls) {
+    const name = attr(control, "name");
+    if (!name) {
+      if (control.tagName !== "BUTTON") fail(`/contact: a <${control.tagName.toLowerCase()}> has no name attribute`);
+      continue;
+    }
+    if (!attr(control, "toolparamdescription")) fail(`/contact: control ${name} has no toolparamdescription`);
+    byName.set(name, [...(byName.get(name) ?? []), control]);
+  }
+
+  const expected = ["name", "email", "company", "website", "services", "message", "_gotcha", "_subject"];
+  for (const name of expected) if (!byName.has(name)) fail(`/contact: no control named ${name}`);
+  const unexpected = [...byName.keys()].filter((name) => !expected.includes(name));
+  if (unexpected.length) fail(`/contact: unexpected controls ${unexpected.join(", ")}`);
+
+  const required = expected.filter((name) => byName.get(name)?.some((c) => c.hasAttribute("required")));
+  const toolRequired = [...(inquiryTool.inputSchema?.required ?? [])].sort();
+  if (JSON.stringify(required.sort()) !== JSON.stringify(toolRequired)) {
+    fail(`/contact: required controls (${required.join(", ")}) differ from the tool schema (${toolRequired.join(", ")})`);
+  }
+  if (!byName.get("message")?.[0]?.hasAttribute("required")) fail("/contact: message is not required");
+  if (byName.get("message")?.[0]?.tagName !== "TEXTAREA") fail("/contact: message is not a <textarea>");
+  if (attr(byName.get("email")?.[0], "type") !== "email") fail("/contact: email is not type=email");
+
+  const boxes = byName.get("services") ?? [];
+  if (boxes.length !== INQUIRY_SERVICES.length || boxes.some((c) => attr(c, "type") !== "checkbox")) {
+    fail(`/contact: expected ${INQUIRY_SERVICES.length} services checkboxes, found ${boxes.length}`);
+  }
+  const values = boxes.map((c) => decode(attr(c, "value") ?? ""));
+  if (JSON.stringify(values) !== JSON.stringify([...INQUIRY_SERVICES])) fail("/contact: services checkbox values differ from INQUIRY_SERVICES");
+  const enumValues = inquiryTool.inputSchema?.properties?.services?.items?.enum ?? [];
+  if (JSON.stringify([...enumValues]) !== JSON.stringify([...INQUIRY_SERVICES])) fail("tool schema: services enum differs from INQUIRY_SERVICES");
+  if (!form.querySelector("fieldset legend")) fail("/contact: services checkboxes are not inside a <fieldset> with a <legend>");
+  for (const box of boxes) {
+    const id = attr(box, "id");
+    if (!id || !form.querySelector(`label[for="${id}"]`)) fail(`/contact: services checkbox ${attr(box, "value")} has no <label for>`);
+  }
+
+  const honeypot = byName.get("_gotcha")?.[0];
+  if (!honeypot || attr(honeypot, "tabindex") !== "-1" || attr(honeypot, "aria-hidden") !== "true" || !/\bhoneypot\b/.test(attr(honeypot, "class") ?? "")) {
+    fail("/contact: _gotcha honeypot is missing or not hidden (tabindex=-1, aria-hidden, .honeypot)");
+  }
+  if (attr(byName.get("_subject")?.[0], "type") !== "hidden") fail("/contact: _subject is not a hidden input");
+  if (!form.querySelector('button[type="submit"]')) fail("/contact: no submit button");
+
+  if (inquiryTool.name !== INQUIRY_TOOL_NAME) fail(`tool name is ${inquiryTool.name}`);
+  if (inquiryTool.annotations?.consequentialHint !== true) fail("tool descriptor: consequentialHint is not true");
+  if (inquiryTool.annotations?.readOnlyHint !== false) fail("tool descriptor: readOnlyHint is not false");
+  if (EMAIL_LIKE.test(JSON.stringify(inquiryTool))) fail("tool descriptor: contains an email address");
+  if (!/WebMCP/.test(decode(main?.innerText ?? "")) || !/confirm|press Submit/i.test(decode(main?.innerText ?? ""))) {
+    fail("/contact: copy does not say an assistant can fill the form and the person confirms");
+  }
+}
+
+function checkFeedbackForm(pages) {
+  const doc = parse(pages.get("/tools") ?? "");
+  const form = doc.querySelectorAll("form").find((f) => f.querySelector('[name="_gotcha"]'));
+  if (!form) return fail("/tools: no feedback form with a _gotcha honeypot");
+  for (const name of ["tool", "type", "email", "message", "_gotcha"]) {
+    if (!form.querySelector(`[name="${name}"]`)) fail(`/tools: feedback form has no control named ${name}`);
+  }
+  if (form.hasAttribute("toolname")) fail("/tools: the feedback form must not be exposed as a WebMCP tool");
+}
+
 async function checkMarkdownTwins() {
   for (const route of ROUTES) {
     const file = path.join(OUT, markdownPath(route).slice(1));
@@ -241,6 +336,8 @@ async function main() {
   await checkPages(pages);
   const h2Count = checkServices(pages);
   checkPageContent(pages);
+  checkContactForm(pages);
+  checkFeedbackForm(pages);
   await checkMarkdownTwins();
   await checkLlms();
   await checkAssets();

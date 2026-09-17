@@ -195,3 +195,31 @@
   height: 1px;
   opacity: 0;
 }
+
+/* ── Forms — checkboxes and submit ────────────────────────────────────── */
+.contact-checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--navy);
+}
+
+.contact-checkbox:focus-visible,
+.contact-submit:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 2px;
+}
+
+/* ── Forms — WebMCP pending state ─────────────────────────────────────── */
+/* A supporting browser applies these while an agent has filled the form and
+   is waiting for the person to confirm. Kept as separate rules: an unknown
+   pseudo-class would invalidate a shared selector list elsewhere. */
+form:tool-form-active {
+  outline: 2px solid var(--slate);
+  outline-offset: 12px;
+}
+
+button:tool-submit-active {
+  box-shadow: 0 0 0 4px var(--badge-blue);
+}

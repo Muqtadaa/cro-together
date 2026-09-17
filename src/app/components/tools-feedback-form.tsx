@@ -40,12 +40,14 @@ const labelStyle: React.CSSProperties = {
 /** Native <select> styled to match the form inputs, with a custom chevron. */
 function Select({
   id,
+  name,
   label,
   value,
   onChange,
   options,
 }: {
   id: string;
+  name: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -57,6 +59,7 @@ function Select({
       <div className="relative">
         <select
           id={id}
+          name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="appearance-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
@@ -164,6 +167,7 @@ export function ToolsFeedbackForm() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Select
           id="feedback-tool"
+          name="tool"
           label="Which tool"
           value={form.tool}
           onChange={(v) => setForm({ ...form, tool: v })}
@@ -171,6 +175,7 @@ export function ToolsFeedbackForm() {
         />
         <Select
           id="feedback-type"
+          name="type"
           label="Type of feedback"
           value={form.type}
           onChange={(v) => setForm({ ...form, type: v })}
@@ -182,6 +187,7 @@ export function ToolsFeedbackForm() {
         <label htmlFor="feedback-email" style={labelStyle}>Email (optional)</label>
         <input
           id="feedback-email"
+          name="email"
           type="email"
           placeholder="you@company.com — if you'd like a reply"
           value={form.email}
@@ -198,6 +204,7 @@ export function ToolsFeedbackForm() {
         </label>
         <textarea
           id="feedback-message"
+          name="message"
           placeholder="What did you run into, or what would make these better?"
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
