@@ -12,11 +12,13 @@
  *      rel="alternate" type="text/markdown" (src/seo/meta.ts).
  *   4. Writes build/client/llms.txt (the site map for agents, llmstxt.org
  *      format) and llms-full.txt (every twin concatenated).
+ *   5. Deletes build/client/__spa-fallback.html: every route is prerendered
+ *      and 404.html covers the rest, so nothing serves or references it.
  *
  * Runs under Node 22 with type stripping, so it imports the TypeScript
  * registry directly (keep src/seo/routes.ts free of TS-only runtime syntax).
  */
-import { copyFile, mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "node-html-parser";
@@ -184,7 +186,7 @@ function llmsHeader() {
     "",
     `> ${home.description}`,
     "",
-    `${SITE_NAME} is the consultancy of ${PERSON_NAME}, its founder and chief strategist. Contact is form-only (there is no email address): people use the form at ${SITE_URL}/contact, and browsers that support WebMCP expose the same form to AI assistants as the \`submit_inquiry\` tool on that page. Nothing is sent until a person confirms.`,
+    `${SITE_NAME} is the consultancy of ${PERSON_NAME}, its founder and chief strategist. Contact is form-only (there is no email address): people use the form at ${SITE_URL}/contact. In browsers that support WebMCP, AI assistants can fill that form in for the person, either through the form's own declarative \`submit_inquiry\` tool (the browser hands the submit button to the person) or by calling the page's \`draft_inquiry\` tool, which writes the inquiry into the form and stops. Neither sends anything: the person reviews the form and presses Submit.`,
     "",
     `Every page below has a Markdown twin at the same URL with \`.md\` appended (the home page is \`/index.md\`), and each HTML page links to its twin with \`rel="alternate" type="text/markdown"\`.`,
   ].join("\n");
@@ -224,6 +226,18 @@ async function writeLlms(twins) {
   console.log("postbuild: wrote llms.txt and llms-full.txt");
 }
 
+/**
+ * React Router writes __spa-fallback.html for routes it did not prerender.
+ * Every route here is prerendered and unknown URLs get 404.html, so the file
+ * is dead weight that would otherwise be deployed as a reachable page.
+ */
+async function removeSpaFallback() {
+  const file = path.join(OUT, "__spa-fallback.html");
+  if (!(await exists(file))) return;
+  await rm(file);
+  console.log("postbuild: removed __spa-fallback.html");
+}
+
 async function main() {
   if (!(await exists(OUT))) {
     throw new Error(`Build output not found at ${OUT}. Run "react-router build" first.`);
@@ -233,6 +247,7 @@ async function main() {
   await writeSitemap();
   const twins = await writeMarkdownTwins();
   await writeLlms(twins);
+  await removeSpaFallback();
 
   const entries = await readdir(OUT);
   console.log(`postbuild: build/client contains ${entries.length} top-level entries`);

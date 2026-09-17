@@ -41,7 +41,14 @@ export const meta: MetaFunction = () => [
  * and reused on the client. The inline script flags `html.js` before first
  * paint so CSS-only progressive enhancements (the scroll reveal in
  * delight.css) can tell a JS-capable browser from a plain fetch.
+ *
+ * The same script is also the watchdog for that flag: reveals start at
+ * opacity 0 under `html.js` and only fade in once the bundle runs, so if a
+ * <script> fails to load (stale hashed asset, blocker, proxy) or hydration
+ * has not set `window.__hydrated` (src/entry.client.tsx) within 4 s, the
+ * class comes off again and every reveal is plainly visible.
  */
+const JS_FLAG_SCRIPT = `(function(){var d=document.documentElement;d.classList.add("js");function off(){d.classList.remove("js")}window.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="SCRIPT")off()},true);setTimeout(function(){if(!window.__hydrated)off()},4000)})()`;
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -51,7 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#060e1a" />
         <Meta />
         <Links />
-        <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.add("js")' }} />
+        <script dangerouslySetInnerHTML={{ __html: JS_FLAG_SCRIPT }} />
       </head>
       <body>
         <a

@@ -9,7 +9,7 @@ import {
   INQUIRY_TOOL_NAME,
   inquiryFailedText,
   inquirySentText,
-  useInquiryTool,
+  useDraftInquiryTool,
 } from "../../lib/webmcp";
 
 function HeroSection() {
@@ -85,8 +85,10 @@ const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
  * Formspree without JavaScript; the `toolname`/`tooldescription`/
  * `toolparamdescription` attributes describe it to WebMCP browsers, which
  * fill it in and then hand the submit button to the person (there is
- * deliberately no `toolautosubmit`). The submit handler is the one path
- * both a person and an agent go through.
+ * deliberately no `toolautosubmit`). The imperative `draft_inquiry` tool
+ * (src/lib/webmcp.ts) writes into these same controls and also stops at the
+ * submit button. The submit handler is the one path both a person and an
+ * agent go through, and only a submit sends anything.
  */
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
@@ -327,7 +329,7 @@ function ContactForm() {
 }
 
 export function Contact() {
-  useInquiryTool();
+  useDraftInquiryTool();
 
   return (
     <>

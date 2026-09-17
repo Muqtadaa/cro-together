@@ -221,6 +221,7 @@ function ServicesSection() {
               <span
                 className="text-slate opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                 style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px" }}
+                aria-hidden="true"
               >
                 →
               </span>
@@ -410,6 +411,7 @@ function ToolsSection() {
               <span
                 className="text-slate opacity-0 group-hover:opacity-100 transition-opacity shrink-0 md:hidden"
                 style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px" }}
+                aria-hidden="true"
               >
                 →
               </span>

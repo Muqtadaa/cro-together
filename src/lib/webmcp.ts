@@ -2,20 +2,33 @@
  * WebMCP: the contact form as an agent-callable tool (owner decision D2: WebMCP
  * only, no remote MCP server).
  *
- * The <form> in Contact.tsx carries the declarative attributes (toolname,
- * tooldescription, toolparamdescription on every control) so a supporting
- * browser can fill it in and, because toolautosubmit is deliberately absent,
- * hand the submit button to the person. useInquiryTool() additionally
- * registers the same capability imperatively so an agent can call it with a
- * structured result. Both go through submitInquiry() (src/lib/inquiry.ts).
+ * Two tools, one form, and a person presses Submit either way:
+ *
+ *   - `submit_inquiry` is the <form> in Contact.tsx itself, declared with the
+ *     toolname/tooldescription/toolparamdescription attributes. A supporting
+ *     browser fills it in and, because toolautosubmit is deliberately absent,
+ *     hands the submit button to the person. Only that submit reaches
+ *     submitInquiry() (src/lib/inquiry.ts).
+ *   - `draft_inquiry` is the imperative tool registered by useDraftInquiryTool()
+ *     while the page is mounted. It writes the agent's structured input into
+ *     the same form controls, scrolls to the submit button and stops. It
+ *     never sends anything: this module does not import submitInquiry() and
+ *     never calls fetch.
  */
 import { useEffect } from "react";
-import { INQUIRY_LIMITS, INQUIRY_SERVICES, submitInquiry, type InquiryInput } from "./inquiry.ts";
+import { INQUIRY_LIMITS, INQUIRY_SERVICES } from "./inquiry.ts";
 
+/** Name of the declarative form tool (the <form toolname> in Contact.tsx). */
 export const INQUIRY_TOOL_NAME = "submit_inquiry";
 
 export const INQUIRY_TOOL_DESCRIPTION =
   "Submits a project inquiry to CRO Together. Use when the user wants to get in touch or start a CRO/experimentation project. Requires name, email and message.";
+
+/** Name of the imperative tool that fills the form in without sending it. */
+export const DRAFT_TOOL_NAME = "draft_inquiry";
+
+export const DRAFT_TOOL_DESCRIPTION =
+  "Fills in the contact form on this page with a project inquiry to CRO Together so the user can review it and press Submit themselves. Nothing is sent by this tool. Use when the user wants to get in touch or start a CRO/experimentation project. Requires name, email and message.";
 
 /** Per-field guidance shared by the form's toolparamdescription attributes and the tool schema. */
 export const INQUIRY_PARAMS = {
@@ -48,7 +61,7 @@ export const inquiryInputSchema = {
   additionalProperties: false,
 } as const;
 
-/** The text an agent receives after a successful call. Never echoes the email address. */
+/** The text an agent receives after a successful declarative submit. Never echoes the email address. */
 export function inquirySentText(name: string): string {
   return `Inquiry sent to CRO Together. ${name} will get a personal reply from Muqtadaa within 24 hours at the email address they provided.`;
 }
@@ -57,24 +70,96 @@ export function inquiryFailedText(reason: string): string {
   return `The inquiry was not sent. ${reason} Ask the user to review the form on this page and try again.`;
 }
 
-export const inquiryTool: WebMCP.ModelContextTool = {
-  name: INQUIRY_TOOL_NAME,
-  title: "Send a project inquiry to CRO Together",
-  description: INQUIRY_TOOL_DESCRIPTION,
+/** What draft_inquiry returns once the controls are filled. */
+export const DRAFT_FILLED_TEXT =
+  "The contact form is filled in. Ask the user to review it and press Submit; nothing is sent until they do.";
+
+/** What draft_inquiry returns when the form is not on the page (another route, or already submitted). */
+export const DRAFT_NO_FORM_TEXT =
+  "The contact form is not on this page. Open /contact and call this tool again.";
+
+/* ── Filling the form ───────────────────────────────────────────────────── */
+
+function asText(value: unknown, max: number): string {
+  return typeof value === "string" ? value.slice(0, max) : "";
+}
+
+/**
+ * Sets a control's value the way a person typing would, so React (which
+ * tracks the value property) sees the change: the native prototype setter,
+ * then input and change events that bubble to React's root listener.
+ */
+function setValue(control: HTMLInputElement | HTMLTextAreaElement, value: string): void {
+  const proto = control instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+  if (setter) setter.call(control, value);
+  else control.value = value;
+  control.dispatchEvent(new Event("input", { bubbles: true }));
+  control.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function setChecked(box: HTMLInputElement, checked: boolean): void {
+  if (box.checked === checked) return;
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "checked")?.set;
+  if (setter) setter.call(box, checked);
+  else box.checked = checked;
+  box.dispatchEvent(new Event("input", { bubbles: true }));
+  box.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+/** The mounted contact form, if the page is showing one. */
+export function findInquiryForm(): HTMLFormElement | null {
+  if (typeof document === "undefined") return null;
+  return document.querySelector<HTMLFormElement>(`form[toolname="${INQUIRY_TOOL_NAME}"]`);
+}
+
+/**
+ * Writes the agent's input into the form's controls. Unknown services are
+ * ignored; every checkbox is set explicitly so a second call replaces the
+ * first instead of adding to it. Ends by scrolling to and focusing the submit
+ * button, which is the one thing it leaves to the person.
+ */
+export function fillInquiryForm(form: HTMLFormElement, input: Record<string, unknown>): void {
+  const control = (name: string) =>
+    form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]:not([type="checkbox"])`);
+
+  const textFields = ["name", "email", "company", "website", "message"] as const;
+  for (const field of textFields) {
+    const el = control(field);
+    if (el) setValue(el, asText(input[field], INQUIRY_LIMITS[field]));
+  }
+
+  const wanted = new Set(
+    (Array.isArray(input.services) ? input.services : [])
+      .filter((s): s is string => typeof s === "string")
+      .map((s) => s.trim().toLowerCase()),
+  );
+  for (const box of form.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name="services"]')) {
+    setChecked(box, wanted.has(box.value.toLowerCase()));
+  }
+
+  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+  if (submit) {
+    submit.scrollIntoView({ block: "center", behavior: "smooth" });
+    submit.focus({ preventScroll: true });
+  }
+}
+
+export const draftInquiryTool: WebMCP.ModelContextTool = {
+  name: DRAFT_TOOL_NAME,
+  title: "Draft an inquiry to CRO Together in the contact form",
+  description: DRAFT_TOOL_DESCRIPTION,
   inputSchema: inquiryInputSchema,
   annotations: {
-    readOnlyHint: false,
-    consequentialHint: true, // a real message lands in a real inbox: agents should confirm first
-    untrustedContentHint: false, // the result is our own fixed confirmation text
+    readOnlyHint: false, // it changes what the page shows
+    consequentialHint: false, // but sends nothing: the person still has to press Submit
+    untrustedContentHint: false, // the result is our own fixed text
   },
-  async execute(input, { signal }) {
-    try {
-      const inquiry = await submitInquiry(input as InquiryInput, { signal });
-      return { content: [{ type: "text", text: inquirySentText(inquiry.name) }] };
-    } catch (err) {
-      const reason = err instanceof Error && err.message ? err.message : "Something went wrong.";
-      return { content: [{ type: "text", text: inquiryFailedText(reason) }], isError: true };
-    }
+  async execute(input) {
+    const form = findInquiryForm();
+    if (!form) return { content: [{ type: "text", text: DRAFT_NO_FORM_TEXT }], isError: true };
+    fillInquiryForm(form, (input ?? {}) as Record<string, unknown>);
+    return { content: [{ type: "text", text: DRAFT_FILLED_TEXT }] };
   },
 };
 
@@ -89,16 +174,16 @@ export function getModelContext(): WebMCP.ModelContext | undefined {
 }
 
 /**
- * Registers submit_inquiry while the contact page is mounted and unregisters
+ * Registers draft_inquiry while the contact page is mounted and unregisters
  * it (by aborting the registration signal) on unmount. A no-op everywhere
  * WebMCP is absent, and on the server.
  */
-export function useInquiryTool(): void {
+export function useDraftInquiryTool(): void {
   useEffect(() => {
     const modelContext = getModelContext();
     if (!modelContext) return;
     const controller = new AbortController();
-    modelContext.registerTool(inquiryTool, { signal: controller.signal }).catch(() => {});
+    modelContext.registerTool(draftInquiryTool, { signal: controller.signal }).catch(() => {});
     return () => controller.abort();
   }, []);
 }

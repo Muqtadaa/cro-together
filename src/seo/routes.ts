@@ -53,7 +53,7 @@ export const PAGES: readonly PageEntry[] = [
   {
     path: "/services",
     label: "Services",
-    title: "CRO Services: Diagnostic, Roadmap, Testing, Research, Implementation, Advisory",
+    title: "CRO Services: Diagnostic to Fractional Advisory",
     description:
       "Six services for growth teams, from a Conversion Diagnostic to Fractional CRO Advisory.",
   },

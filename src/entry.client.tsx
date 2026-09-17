@@ -22,4 +22,7 @@ startTransition(() => {
       <HydratedRouter />
     </StrictMode>
   );
+  // Tells the inline watchdog in src/root.tsx that the bundle ran, so it
+  // leaves the `html.js` flag (and the scroll reveals) in place.
+  window.__hydrated = true;
 });
