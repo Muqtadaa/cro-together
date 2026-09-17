@@ -354,7 +354,7 @@ function ContactForm() {
         </motion.div>
         <motion.h2
           className="text-navy"
-          style={{ fontFamily: "'Newsreader', serif", fontWeight: 400, fontSize: "32px" }}
+          style={{ fontFamily: serif, fontWeight: 400, fontSize: "32px" }}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}

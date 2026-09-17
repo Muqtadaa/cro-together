@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router";
 import { useEffect } from "react";
-import imgMinimalistWorkspace from "../../assets/workspace.jpg";
+import imgWorkspace800 from "../../assets/workspace-800.webp";
+import imgWorkspace1600 from "../../assets/workspace-1600.webp";
 import { serif, sans, tx } from "../../lib/typography";
 import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
@@ -35,12 +36,16 @@ function HeroSection() {
       <div className="pb-16">
         <div className="w-full h-[400px] rounded-lg overflow-hidden relative bg-tan-light">
           <img
-            src={imgMinimalistWorkspace}
-            alt="Strategic workspace"
+            src={imgWorkspace1600}
+            srcSet={`${imgWorkspace800} 800w, ${imgWorkspace1600} 1600w`}
+            sizes="(min-width: 1280px) 1216px, 100vw"
+            width={1600}
+            height={1067}
+            alt=""
             className="absolute w-full h-full object-cover opacity-80"
             style={{ filter: "saturate(0)", objectPosition: "center 20%" }}
-            fetchPriority="high"
             loading="eager"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgba(6,14,26,0.3)] to-transparent" />
         </div>

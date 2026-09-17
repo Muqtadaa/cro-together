@@ -1,6 +1,8 @@
 import { Link } from "react-router";
-import imgChart from "../../assets/analytics-tablet.jpg";
-import imgSaaS from "../../assets/lightbulb.jpg";
+import imgChart800 from "../../assets/analytics-tablet-800.webp";
+import imgChart1600 from "../../assets/analytics-tablet-1600.webp";
+import imgSaaS800 from "../../assets/lightbulb-800.webp";
+import imgSaaS1600 from "../../assets/lightbulb-1600.webp";
 import { serif, sans, tx } from "../../lib/typography";
 import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
@@ -51,11 +53,16 @@ function FeaturedCase() {
         {/* Left: Image */}
         <div className="lg:col-span-7 rounded-lg overflow-hidden bg-tan" style={{ height: "430px" }}>
           <img
-            src={imgChart}
-            alt="Bento panel engagement lift"
+            src={imgChart1600}
+            srcSet={`${imgChart800} 800w, ${imgChart1600} 1600w`}
+            sizes="(min-width: 1280px) 700px, (min-width: 1024px) 58vw, 100vw"
+            width={1600}
+            height={914}
+            alt=""
             className="w-full h-full object-cover"
             style={{ filter: "saturate(0)", objectPosition: "center" }}
             loading="lazy"
+            decoding="async"
           />
         </div>
 
@@ -137,11 +144,16 @@ function DualCase() {
 
           <div className="rounded-lg overflow-hidden bg-tan-light relative" style={{ height: "300px" }}>
             <img
-              src={imgSaaS}
-              alt="Personalised homepage panels"
+              src={imgSaaS1600}
+              srcSet={`${imgSaaS800} 800w, ${imgSaaS1600} 1600w`}
+              sizes="(min-width: 1280px) 600px, (min-width: 1024px) 50vw, 100vw"
+              width={1600}
+              height={897}
+              alt=""
               className="absolute inset-0 w-full h-full object-cover"
               style={{ filter: "saturate(0.2)" }}
               loading="lazy"
+              decoding="async"
             />
           </div>
 

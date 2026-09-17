@@ -5,14 +5,34 @@
  *      build/client/404.html, which Vercel serves with a real 404 status for
  *      every unknown URL.
  *   2. Writes build/client/sitemap.xml from the route registry.
+ *   3. Writes a Markdown twin next to every prerendered page
+ *      (build/client/<route>.md, index.md for "/"): YAML front matter, the
+ *      page's <main> converted with turndown, and the page's JSON-LD as a
+ *      fenced json block. Each page links to its twin with
+ *      rel="alternate" type="text/markdown" (src/seo/meta.ts).
+ *   4. Writes build/client/llms.txt (the site map for agents, llmstxt.org
+ *      format) and llms-full.txt (every twin concatenated).
  *
  * Runs under Node 22 with type stripping, so it imports the TypeScript
  * registry directly (keep src/seo/routes.ts free of TS-only runtime syntax).
  */
-import { copyFile, mkdir, readdir, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { absoluteUrl, NOT_FOUND, ROUTES } from "../src/seo/routes.ts";
+import { parse } from "node-html-parser";
+import TurndownService from "turndown";
+import {
+  absoluteUrl,
+  getPage,
+  markdownPath,
+  NOT_FOUND,
+  PAGES,
+  PERSON_NAME,
+  PORTFOLIO_URL,
+  ROUTES,
+  SITE_NAME,
+  SITE_URL,
+} from "../src/seo/routes.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(root, "build/client");
@@ -24,6 +44,10 @@ async function exists(file) {
   } catch {
     return false;
   }
+}
+
+function htmlPath(route) {
+  return path.join(OUT, route === "/" ? "index.html" : `${route.slice(1)}/index.html`);
 }
 
 async function copyNotFound() {
@@ -38,8 +62,7 @@ async function copyNotFound() {
 async function writeSitemap() {
   const missing = [];
   for (const route of ROUTES) {
-    const file = path.join(OUT, route === "/" ? "index.html" : `${route.slice(1)}/index.html`);
-    if (!(await exists(file))) missing.push(route);
+    if (!(await exists(htmlPath(route)))) missing.push(route);
   }
   if (missing.length) {
     throw new Error(`Routes registered but not prerendered: ${missing.join(", ")}`);
@@ -51,6 +74,156 @@ async function writeSitemap() {
   console.log(`postbuild: wrote sitemap.xml (${ROUTES.length} urls)`);
 }
 
+/* ── Markdown twins ─────────────────────────────────────────────────────── */
+
+/** Elements that carry no prose for a reader of the Markdown version. */
+const DROP_SELECTOR = "script, style, noscript, svg, button, input, textarea, select, template, [aria-hidden='true']";
+
+const turndown = new TurndownService({
+  headingStyle: "atx",
+  bulletListMarker: "-",
+  codeBlockStyle: "fenced",
+  emDelimiter: "*",
+});
+// Line breaks inside headings and paragraphs are layout, not content.
+turndown.addRule("softBreak", { filter: "br", replacement: () => " " });
+
+const yamlString = (value) => JSON.stringify(String(value));
+
+/**
+ * Inline elements laid out with flex/grid gaps have no whitespace between
+ * them in the HTML, so their text would run together in Markdown
+ * ("01Conversion Diagnostic"). Separate adjacent inline siblings with a
+ * middle dot when nothing (not even a space) sits between them.
+ */
+const INLINE_TAGS = new Set(["SPAN", "A", "EM", "STRONG", "I", "B", "SMALL", "TIME", "ABBR", "LABEL", "IMG"]);
+function separateInlineSiblings(container) {
+  for (const el of container.querySelectorAll("*")) {
+    if (!INLINE_TAGS.has(el.tagName)) continue;
+    const prev = el.previousSibling;
+    if (prev && prev.nodeType === 1 && INLINE_TAGS.has(prev.tagName)) {
+      el.insertAdjacentHTML("beforebegin", " \u00b7 ");
+    }
+  }
+}
+
+/** Every JSON-LD node on the page, merged into one @graph. */
+function collectJsonLd(document, route) {
+  const nodes = [];
+  for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+    let data;
+    try {
+      data = JSON.parse(script.rawText);
+    } catch (err) {
+      throw new Error(`${route}: JSON-LD block does not parse: ${err.message}`);
+    }
+    if (Array.isArray(data["@graph"])) nodes.push(...data["@graph"]);
+    else nodes.push(data);
+  }
+  return { "@context": "https://schema.org", "@graph": nodes };
+}
+
+/** Converts one prerendered page to Markdown; returns { frontMatter, body, markdown }. */
+function toMarkdown(html, route) {
+  const page = getPage(route);
+  const canonical = absoluteUrl(route);
+  const document = parse(html);
+  const main = document.querySelector("main#main");
+  if (!main) throw new Error(`${route}: no <main id="main"> in the prerendered HTML`);
+
+  const removedForms = main.querySelectorAll("form").length;
+  for (const el of main.querySelectorAll(`${DROP_SELECTOR}, form`)) el.remove();
+  // Decorative images (alt="") say nothing in Markdown; keep the ones with a description.
+  for (const img of main.querySelectorAll("img")) {
+    if (!img.getAttribute("alt")) img.remove();
+    else img.setAttribute("src", new URL(img.getAttribute("src"), canonical).href);
+  }
+  separateInlineSiblings(main);
+  // Absolute links, so the twin reads the same wherever it is quoted from.
+  for (const a of main.querySelectorAll("a[href]")) {
+    const href = a.getAttribute("href");
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(href)) a.setAttribute("href", new URL(href, canonical).href);
+  }
+
+  let body = turndown.turndown(main.innerHTML).replace(/\n{3,}/g, "\n\n").trim();
+  if (removedForms) {
+    body += `\n\nThe form on this page is only available in the HTML version: ${canonical}`;
+  }
+
+  const frontMatter = [
+    "---",
+    `title: ${yamlString(page.title)}`,
+    `description: ${yamlString(page.description)}`,
+    `canonical: ${canonical}`,
+    "---",
+  ].join("\n");
+
+  const jsonLd = JSON.stringify(collectJsonLd(document, route), null, 2);
+  const markdown = `${frontMatter}\n\n${body}\n\n## Structured data\n\n\`\`\`json\n${jsonLd}\n\`\`\`\n`;
+  return { frontMatter, body, markdown, jsonLd };
+}
+
+async function writeMarkdownTwins() {
+  const twins = new Map();
+  for (const route of ROUTES) {
+    const html = await readFile(htmlPath(route), "utf8");
+    const twin = toMarkdown(html, route);
+    await writeFile(path.join(OUT, markdownPath(route).slice(1)), twin.markdown);
+    twins.set(route, twin);
+  }
+  console.log(`postbuild: wrote ${twins.size} Markdown twins`);
+  return twins;
+}
+
+/* ── llms.txt ───────────────────────────────────────────────────────────── */
+
+function llmsHeader() {
+  const home = getPage("/");
+  return [
+    `# ${SITE_NAME}`,
+    "",
+    `> ${home.description}`,
+    "",
+    `${SITE_NAME} is the consultancy of ${PERSON_NAME}, its founder and chief strategist. Contact is form-only (there is no email address): people use the form at ${SITE_URL}/contact, and browsers that support WebMCP expose the same form to AI assistants as the \`submit_inquiry\` tool on that page. Nothing is sent until a person confirms.`,
+    "",
+    `Every page below has a Markdown twin at the same URL with \`.md\` appended (the home page is \`/index.md\`), and each HTML page links to its twin with \`rel="alternate" type="text/markdown"\`.`,
+  ].join("\n");
+}
+
+function llmsTxt() {
+  const link = (page) => `- [${page.title}](${SITE_URL}${markdownPath(page.path)}): ${page.description}`;
+  const main = PAGES.filter((page) => page.path !== "/privacy");
+  const privacy = PAGES.find((page) => page.path === "/privacy");
+  return [
+    llmsHeader(),
+    "",
+    "## Pages",
+    "",
+    ...main.map(link),
+    "",
+    "## Optional",
+    "",
+    link(privacy),
+    `- [${PERSON_NAME}](${PORTFOLIO_URL}): personal site: digital art, design, D&D`,
+    "",
+  ].join("\n");
+}
+
+function llmsFullTxt(twins) {
+  const parts = [llmsHeader()];
+  for (const route of ROUTES) {
+    const twin = twins.get(route);
+    parts.push("", "---", "", `Source: ${absoluteUrl(route)}`, "", twin.body, "", "```json", twin.jsonLd, "```");
+  }
+  return `${parts.join("\n")}\n`;
+}
+
+async function writeLlms(twins) {
+  await writeFile(path.join(OUT, "llms.txt"), llmsTxt());
+  await writeFile(path.join(OUT, "llms-full.txt"), llmsFullTxt(twins));
+  console.log("postbuild: wrote llms.txt and llms-full.txt");
+}
+
 async function main() {
   if (!(await exists(OUT))) {
     throw new Error(`Build output not found at ${OUT}. Run "react-router build" first.`);
@@ -58,6 +231,8 @@ async function main() {
   await mkdir(OUT, { recursive: true });
   await copyNotFound();
   await writeSitemap();
+  const twins = await writeMarkdownTwins();
+  await writeLlms(twins);
 
   const entries = await readdir(OUT);
   console.log(`postbuild: build/client contains ${entries.length} top-level entries`);

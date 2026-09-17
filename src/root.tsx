@@ -7,9 +7,17 @@ import { PageSection } from "./app/components/ui/page-section";
 import { SectionHeader } from "./app/components/ui/section-header";
 import { siteGraph } from "./seo/jsonld";
 import { SITE_NAME } from "./seo/routes";
+import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url";
 import "./styles/index.css";
 
+/**
+ * Site-wide links. Only the Manrope latin woff2 is preloaded: it is
+ * `font-display: optional` (src/styles/fonts.css), so having it in the
+ * cache before first paint is what keeps body text from settling on the
+ * fallback face. Newsreader uses `swap` and loads through the stylesheet.
+ */
 export const links: LinksFunction = () => [
+  { rel: "preload", href: manropeLatin, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
   { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
   { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },

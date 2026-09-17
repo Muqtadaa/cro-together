@@ -4,6 +4,7 @@ import { PageSection } from "../components/ui/page-section";
 import { SectionHeader } from "../components/ui/section-header";
 import { ExtensionGallery, type Screenshot } from "../components/extension-gallery";
 import { ToolsFeedbackForm } from "../components/tools-feedback-form";
+import { EXTENSIONS as EXTENSION_INFO, type ExtensionInfo } from "../data/extensions";
 
 // Power Tools screenshots (polished marketing tiles) — full + thumbnail
 import ptBulk from "../../assets/extensions/power-tools/01-bulk.webp";
@@ -31,71 +32,33 @@ import qaDrawerT from "../../assets/extensions/qa-helper/thumbs/04-drawer-mode.w
 import qaEventLogT from "../../assets/extensions/qa-helper/thumbs/05-event-log.webp";
 import qaCollapsedT from "../../assets/extensions/qa-helper/thumbs/06-collapsed-tab.webp";
 
-interface ExtensionData {
-  number: string;
-  name: string;
-  tagline: string;
-  description: string;
-  features: { title: string; detail: string }[];
+interface ExtensionData extends ExtensionInfo {
   screenshots: Screenshot[];
-  storeUrl: string;
-  /** Small reassurance line shown under the CTA (privacy / affiliation note). */
-  note?: string;
 }
 
-const EXTENSIONS: ExtensionData[] = [
-  {
-    number: "01",
-    name: "Optimizely Web QA Helper",
-    tagline: "A lightweight QA panel for Optimizely Web Experimentation.",
-    description:
-      "Everything you need to QA a live experiment, without leaving the page you're testing. The panel runs entirely in your browser — no accounts, no telemetry, no data leaves your machine.",
-    features: [
-      { title: "Force Variations", detail: "Switch visitor variations inline; single-page tests re-trigger in place, others reload for clean re-bucketing." },
-      { title: "Live Experiment List", detail: "A dropdown that updates as experiments activate, showing active audiences at a glance." },
-      { title: "QA Cookie Toggle", detail: "Set or clear project QA cookies in one click, configurable per site." },
-      { title: "Mobile Viewport Emulation", detail: "Preview real device dimensions so responsive breakpoints and mobile user-agents genuinely activate." },
-      { title: "Float or Dock", detail: "Run it as a floating popup or a docked side drawer — preference saved per site." },
-      { title: "Live Event Log", detail: "Watch Optimizely lifecycle events, decisions, and tracked events with filters and expandable payloads." },
-    ],
-    screenshots: [
-      { src: qaForce, thumb: qaForceT, alt: "Force Variations panel switching a visitor's variation on a live storefront", caption: "Force variations inline" },
-      { src: qaList, thumb: qaListT, alt: "Live experiment list dropdown showing active experiments and audiences", caption: "Live experiment list" },
-      { src: qaDevices, thumb: qaDevicesT, alt: "Settings panel with device and viewport emulation options", caption: "Device & viewport emulation" },
-      { src: qaDrawer, thumb: qaDrawerT, alt: "QA Helper docked as a side drawer alongside the page", caption: "Dock as a side drawer" },
-      { src: qaEventLog, thumb: qaEventLogT, alt: "Live event log streaming Optimizely lifecycle and tracked events", caption: "Live event log" },
-      { src: qaCollapsed, thumb: qaCollapsedT, alt: "Collapsed floating tab tucked at the edge of the page", caption: "Collapsed floating tab" },
-    ],
-    storeUrl: "https://chromewebstore.google.com/detail/optimizely-web-qa-helper/diccoohklmgnapebfindkoocilnlbocg",
-    note: "Runs locally in your browser. Collects no data and sends no telemetry.",
-  },
-  {
-    number: "02",
-    name: "Optimizely Power Tools",
-    tagline: "Productivity superpowers layered into the Optimizely app.",
-    description:
-      "The bulk actions, shortcuts, and quality-of-life features that turn hours of repetitive program management into a handful of clicks — added right inside the Optimizely interface you already use.",
-    features: [
-      { title: "Bulk Management", detail: "Select multiple tests to pause, archive, unarchive, or conclude in a single action." },
-      { title: "Inline Test Summaries", detail: "Expand any row to see status, IDs, audiences, variations, pages, and metrics without opening the test." },
-      { title: "Configuration Copying", detail: "Transfer specific metrics, audiences, code blocks, pages, and variations between experiments — with validation." },
-      { title: "A/B ⇄ Personalization", detail: "Convert between A/B tests and Personalization campaigns with a visual diff of what transfers." },
-      { title: "Metrics Reordering", detail: "Reorder and bulk-remove metrics with buttons instead of fiddly manual dragging." },
-      { title: "Experience Management", detail: "Reorder and group or ungroup Personalization experiences through simple dialog controls." },
-      { title: "Version History", detail: "Automatic restore points with one-click rollback and a clear change timeline." },
-      { title: "Figma Integration", detail: "Browse and attach design frames to variations without copying URLs around." },
-    ],
-    screenshots: [
-      { src: ptBulk, thumb: ptBulkT, alt: "Bulk actions selecting multiple tests to pause, archive, or conclude", caption: "Bulk-manage tests from the list" },
-      { src: ptSummary, thumb: ptSummaryT, alt: "Inline test summary expanded within the experiment list", caption: "Inline test summaries" },
-      { src: ptFigma, thumb: ptFigmaT, alt: "Figma frame picker attaching a design to a variation", caption: "Attach Figma frames to variations" },
-      { src: ptConvert, thumb: ptConvertT, alt: "Converting an A/B test into a Personalization campaign with a diff", caption: "Convert A/B ⇄ Personalization" },
-      { src: ptHistory, thumb: ptHistoryT, alt: "Version history timeline with one-click rollback", caption: "Version history & rollback" },
-    ],
-    storeUrl: "https://chromewebstore.google.com/detail/optimizely-power-tools/khnghhfcmojoblenbinhegjdijcnamod",
-    note: "An independent project, not affiliated with or endorsed by Optimizely.",
-  },
-];
+/** Screenshot galleries keyed by extension number; the text lives in src/app/data/extensions.ts. */
+const SCREENSHOTS: Record<string, Screenshot[]> = {
+  "01": [
+    { src: qaForce, thumb: qaForceT, alt: "Force Variations panel switching a visitor's variation on a live storefront", caption: "Force variations inline" },
+    { src: qaList, thumb: qaListT, alt: "Live experiment list dropdown showing active experiments and audiences", caption: "Live experiment list" },
+    { src: qaDevices, thumb: qaDevicesT, alt: "Settings panel with device and viewport emulation options", caption: "Device & viewport emulation" },
+    { src: qaDrawer, thumb: qaDrawerT, alt: "QA Helper docked as a side drawer alongside the page", caption: "Dock as a side drawer" },
+    { src: qaEventLog, thumb: qaEventLogT, alt: "Live event log streaming Optimizely lifecycle and tracked events", caption: "Live event log" },
+    { src: qaCollapsed, thumb: qaCollapsedT, alt: "Collapsed floating tab tucked at the edge of the page", caption: "Collapsed floating tab" },
+  ],
+  "02": [
+    { src: ptBulk, thumb: ptBulkT, alt: "Bulk actions selecting multiple tests to pause, archive, or conclude", caption: "Bulk-manage tests from the list" },
+    { src: ptSummary, thumb: ptSummaryT, alt: "Inline test summary expanded within the experiment list", caption: "Inline test summaries" },
+    { src: ptFigma, thumb: ptFigmaT, alt: "Figma frame picker attaching a design to a variation", caption: "Attach Figma frames to variations" },
+    { src: ptConvert, thumb: ptConvertT, alt: "Converting an A/B test into a Personalization campaign with a diff", caption: "Convert A/B ⇄ Personalization" },
+    { src: ptHistory, thumb: ptHistoryT, alt: "Version history timeline with one-click rollback", caption: "Version history & rollback" },
+  ],
+};
+
+const EXTENSIONS: ExtensionData[] = EXTENSION_INFO.map((ext) => ({
+  ...ext,
+  screenshots: SCREENSHOTS[ext.number] ?? [],
+}));
 
 function HeroSection() {
   return (

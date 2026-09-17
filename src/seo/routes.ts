@@ -2,8 +2,8 @@
  * The single route registry for crotogether.com.
  *
  * Feeds route `meta()` (src/seo/meta.ts), the prerender list
- * (react-router.config.ts) and scripts/postbuild.mjs (sitemap.xml, and from
- * C2 onwards the Markdown twins and llms.txt). Add a page here first; the
+ * (react-router.config.ts) and scripts/postbuild.mjs (sitemap.xml, the
+ * Markdown twins and llms.txt). Add a page here first; the
  * route module in src/routes/ then just points at it.
  *
  * Keep this file free of TypeScript-only runtime syntax (enums, parameter
@@ -18,6 +18,12 @@ export const SITE_NAME = "CRO Together";
 export const ORG_ID = `${SITE_URL}/#organization`;
 export const PERSON_ID = "https://muqtadaa.github.io/#person";
 
+export const PERSON_NAME = "Muqtadaa Miandara";
+export const PERSON_JOB_TITLE = "Founder & Chief Strategist";
+/** The founder's personal site (digital art, design, D&D). Cross-linked with rel="me". */
+export const PORTFOLIO_URL = "https://muqtadaa.github.io/";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/muqtadaa";
+
 export const OG_IMAGE = {
   path: "/og-image.png",
   width: 1200,
@@ -28,6 +34,8 @@ export const OG_IMAGE = {
 export interface PageEntry {
   /** Root-relative path with no trailing slash (`/` for the home page). */
   path: string;
+  /** Short name used in breadcrumbs and llms.txt (the nav label where one exists). */
+  label: string;
   /** Document title; the site name is not appended. */
   title: string;
   /** Meta description, also reused for Open Graph and the sitemap twins. */
@@ -37,42 +45,49 @@ export interface PageEntry {
 export const PAGES: readonly PageEntry[] = [
   {
     path: "/",
+    label: "Home",
     title: "CRO Together: Boutique CRO & Experimentation Consultancy",
     description:
       "Conversion diagnostics, experimentation roadmaps, A/B testing and personalisation, UX research and fractional CRO leadership by Muqtadaa Miandara. $15.1M incremental revenue in 2025.",
   },
   {
     path: "/services",
+    label: "Services",
     title: "CRO Services: Diagnostic, Roadmap, Testing, Research, Implementation, Advisory",
     description:
       "Six services for growth teams, from a Conversion Diagnostic to Fractional CRO Advisory.",
   },
   {
     path: "/about",
+    label: "About",
     title: "About Muqtadaa Miandara and the Method",
     description:
       "Experimentation, UX research, analytics and hands-on implementation on Optimizely and VWO, prioritised with RICE.",
   },
   {
     path: "/proof",
+    label: "Proof",
     title: "Results: $15.1M Incremental Revenue in One Year",
     description:
       "+45% YoY, 31% win rate across 145 tests, and the individual wins behind the number.",
   },
   {
     path: "/tools",
+    label: "Tools",
     title: "Free Chrome Extensions for Optimizely",
     description:
       "Optimizely Web QA Helper and Optimizely Power Tools. Local only, no telemetry.",
   },
   {
     path: "/contact",
+    label: "Contact",
     title: "Contact CRO Together",
     description:
       "Tell me about your growth challenge; every inquiry is answered within 24 hours. AI assistants can fill this form via WebMCP; you confirm before it sends.",
   },
   {
     path: "/privacy",
+    label: "Privacy Policy",
     title: "Privacy Policy",
     description:
       "What this site collects (nothing passively), how Formspree processes form submissions, which third parties are involved.",
@@ -82,6 +97,7 @@ export const PAGES: readonly PageEntry[] = [
 /** The branded 404 page. Prerendered to /404/index.html and copied to /404.html; never indexed, never in the sitemap. */
 export const NOT_FOUND: PageEntry = {
   path: "/404",
+  label: "Page not found",
   title: "Page not found",
   description: "That address does not exist on crotogether.com.",
 };

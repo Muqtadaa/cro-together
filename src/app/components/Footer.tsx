@@ -1,12 +1,16 @@
 import { Link } from "react-router";
 import blackLogo from "../../assets/logo.png";
 import { serif, sans } from "../../lib/typography";
+import { LINKEDIN_URL, PORTFOLIO_URL } from "../../seo/routes";
+
+const linkStyle: React.CSSProperties = { fontFamily: sans, fontWeight: 200, fontSize: "14px", color: "var(--slate)" };
+const headingStyle: React.CSSProperties = { fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.2px" };
 
 export function Footer() {
   return (
     <footer className="bg-tan border-t border-[rgba(0,0,0,0.06)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
@@ -28,10 +32,7 @@ export function Footer() {
 
           {/* Platform */}
           <div className="flex flex-col gap-4">
-            <span
-              className="text-navy uppercase tracking-widest"
-              style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.2px" }}
-            >
+            <span className="text-navy uppercase tracking-widest" style={headingStyle}>
               Platform
             </span>
             <div className="flex flex-col gap-3">
@@ -40,44 +41,50 @@ export function Footer() {
                 { label: "Proof", href: "/proof" },
                 { label: "About", href: "/about" },
                 { label: "Tools", href: "/tools" },
+                { label: "Contact", href: "/contact" },
               ].map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className="hover:text-text-dark transition-colors"
-                  style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", color: "var(--slate)" }}
-                >
+                <Link key={link.label} to={link.href} className="hover:text-text-dark transition-colors" style={linkStyle}>
                   {link.label}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Legal & Social */}
+          {/* Elsewhere: the founder's other profiles (rel="me" ties them to this site) */}
           <div className="flex flex-col gap-4">
-            <span
-              className="text-navy uppercase"
-              style={{ fontFamily: sans, fontWeight: 300, fontSize: "11px", letterSpacing: "1.2px" }}
-            >
-              Legal &amp; Social
+            <span className="text-navy uppercase" style={headingStyle}>
+              Elsewhere
             </span>
             <div className="flex flex-col gap-3">
-              <Link
-                to="/privacy"
-                className="hover:text-text-dark transition-colors"
-                style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", color: "var(--slate)" }}
-              >
-                Privacy Policy
-              </Link>
               <a
-                href="https://www.linkedin.com/in/muqtadaa"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={PORTFOLIO_URL}
+                rel="me noopener"
                 className="hover:text-text-dark transition-colors"
-                style={{ fontFamily: sans, fontWeight: 200, fontSize: "14px", color: "var(--slate)" }}
+                style={linkStyle}
+              >
+                Portfolio (art, design, D&amp;D)
+              </a>
+              <a
+                href={LINKEDIN_URL}
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="hover:text-text-dark transition-colors"
+                style={linkStyle}
               >
                 LinkedIn
               </a>
+            </div>
+          </div>
+
+          {/* Legal */}
+          <div className="flex flex-col gap-4">
+            <span className="text-navy uppercase" style={headingStyle}>
+              Legal
+            </span>
+            <div className="flex flex-col gap-3">
+              <Link to="/privacy" className="hover:text-text-dark transition-colors" style={linkStyle}>
+                Privacy Policy
+              </Link>
             </div>
           </div>
         </div>

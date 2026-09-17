@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import imgHero from "../../assets/hero.jpg";
+import imgHero800 from "../../assets/hero-800.webp";
+import imgHero1600 from "../../assets/hero-1600.webp";
 import imgProfile from "../../assets/profile.jpeg";
 import svgPaths from "../../imports/svg-oy3pdmbdew";
 import { serif, sans, tx } from "../../lib/typography";
@@ -49,12 +50,17 @@ function HeroSection() {
       {/* Right: Image */}
       <div className="lg:col-span-4 h-[480px] lg:h-[600px] rounded-sm overflow-hidden relative bg-tan-light">
         <img
-          src={imgHero}
-          alt="Hero"
+          src={imgHero1600}
+          srcSet={`${imgHero800} 800w, ${imgHero1600} 1600w`}
+          sizes="(min-width: 1024px) 33vw, 100vw"
+          width={1600}
+          height={1067}
+          alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-80"
           style={{ filter: "saturate(0)", mixBlendMode: "multiply" }}
           fetchPriority="high"
           loading="eager"
+          decoding="async"
         />
       </div>
     </PageSection>

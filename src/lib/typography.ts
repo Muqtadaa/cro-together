@@ -7,8 +7,8 @@
  *   <h2 style={{ ...tx.h2Fluid, color: "#060e1a" }}>...</h2>
  */
 
-export const serif = "'Newsreader', serif";
-export const sans = "'Manrope', sans-serif";
+export const serif = "'Newsreader Variable', 'Newsreader Fallback', Georgia, serif";
+export const sans = "'Manrope Variable', 'Manrope Fallback', system-ui, sans-serif";
 
 export const tx = {
   // ── Page headings (Newsreader) ──────────────────────────────────────────

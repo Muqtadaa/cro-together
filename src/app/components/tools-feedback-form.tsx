@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { sans } from "../../lib/typography";
+import { serif, sans } from "../../lib/typography";
 
 // Dedicated Formspree form for Tools feedback (separate from the Contact inquiry form).
 const FEEDBACK_ENDPOINT = "https://formspree.io/f/xlgyewlv";
@@ -137,7 +137,7 @@ export function ToolsFeedbackForm() {
             <path d="M5 13L9 17L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
-        <h3 className="text-navy" style={{ fontFamily: "'Newsreader', serif", fontWeight: 400, fontSize: "28px" }}>
+        <h3 className="text-navy" style={{ fontFamily: serif, fontWeight: 400, fontSize: "28px" }}>
           Thank you — noted.
         </h3>
         <p className="text-text-body" style={{ fontFamily: sans, fontWeight: 200, fontSize: "17px", lineHeight: "1.6", maxWidth: "40ch" }}>
